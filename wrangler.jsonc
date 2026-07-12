@@ -1,0 +1,19 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "raon",
+  "compatibility_date": "2026-07-12",
+  "preview_urls": true,
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "404-page",
+  },
+  "routes": [
+    {
+      "custom_domain": true,
+      "pattern": "tozydev.id.vn",
+    },
+  ],
+  "build": {
+    "command": "bun run build",
+  },
+}

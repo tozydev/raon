@@ -1,0 +1,21 @@
+---
+import Base from "@layouts/Base.astro"
+import type { GetStaticPaths } from "astro"
+import { getLangPaths, useTranslations, type HasLang } from "raon:i18n"
+
+interface Props extends HasLang {}
+
+export const getStaticPaths = (() => {
+  return getLangPaths("about", "/about")
+}) satisfies GetStaticPaths
+
+const { lang } = Astro.props
+const t = useTranslations(lang)
+---
+
+<Base title={t("pages.about.title")} description={t("pages.about.description")}>
+  <p class="text-lg leading-relaxed text-slate-700">
+    Chào mừng bạn đến với trang giới thiệu của tôi. Đây là nội dung mẫu bằng Tiếng Việt giới thiệu
+    về bản thân, các dự án và định hướng cá nhân.
+  </p>
+</Base>

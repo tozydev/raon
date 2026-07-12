@@ -1,0 +1,62 @@
+---
+import Footer from "@components/Footer.astro"
+import Header from "@components/Header.astro"
+import { getLangFromUrl, useTranslations } from "raon:i18n"
+import FallbackImage from "@assets/blog-placeholder-2.jpg"
+import "../styles/global.css"
+
+interface Props {
+  title: string
+  description: string
+  image?: ImageMetadata
+}
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site)
+
+const { title, description, image = FallbackImage } = Astro.props
+const lang = getLangFromUrl(Astro.url)
+const t = useTranslations(lang)
+---
+
+<!doctype html>
+<html lang={lang} class="scroll-smooth">
+  <head>
+    <!-- Global Metadata -->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title={t("pages.rss.title")}
+      href={new URL("rss.xml", Astro.site)}
+    />
+    <meta name="generator" content={Astro.generator} />
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href={canonicalURL} />
+
+    <!-- Primary Meta Tags -->
+    <title>{title}</title>
+    <meta name="description" content={description} />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={Astro.url} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={new URL(image.src, Astro.url)} />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+  </head>
+  <body class="flex min-h-screen flex-col bg-slate-50 font-sans text-slate-800 antialiased">
+    <Header />
+    <main class="mx-auto w-full max-w-4xl grow px-4 py-8 md:py-12">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

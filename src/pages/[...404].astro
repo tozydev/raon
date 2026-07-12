@@ -1,0 +1,18 @@
+---
+import Base from "@layouts/Base.astro"
+import type { GetStaticPaths } from "astro"
+import { getLangPaths, useTranslations, type HasLang } from "raon:i18n"
+
+interface Props extends HasLang {}
+
+export const getStaticPaths = (() => {
+  return getLangPaths("404", "/404")
+}) satisfies GetStaticPaths
+
+const { lang } = Astro.props
+const t = useTranslations(lang)
+---
+
+<Base title={t("pages.404.title")} description={t("pages.404.description")}>
+  <h1>404</h1>
+</Base>
