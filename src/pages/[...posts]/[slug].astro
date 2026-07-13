@@ -1,38 +1,151 @@
 ---
-import { getCollection, render, type CollectionEntry } from "astro:content"
-import { defaultLang, Languages, useTranslatedPath, type Language } from "raon:i18n"
-import BlogPost from "raon:layouts/BlogPost.astro"
+import { BookOpen, Calendar, Heart } from "@lucide/astro"
+import type { GetStaticPaths } from "astro"
+import { Image } from "astro:assets"
+import { render } from "astro:content"
+import FormattedDate from "raon:components/FormattedDate.astro"
+import { ROUTES } from "raon:consts"
+import { getPosts, type Post } from "raon:content"
+import { useTranslatedPath, useTranslations } from "raon:i18n"
+import Base from "raon:layouts/Base.astro"
 
-export async function getStaticPaths() {
-  const posts = await getCollection("posts")
-  const paths = posts.map((post) => {
-    const parts = post.id.split("/")
-    const slug = parts[0]
-    const fileLang = parts[1] ? parts[1].replace("index", "") : "vi"
-    const lang = Object.values(Languages).includes(fileLang as Language) ? fileLang : defaultLang
-
-    const res = {
-      params: { posts: useTranslatedPath(lang as Language)("/posts"), slug },
-      props: post,
+export const getStaticPaths = (async () => {
+  return (await getPosts()).map((post) => {
+    return {
+      params: { posts: useTranslatedPath(post.lang)(ROUTES.posts), slug: post.slug },
+      props: { post },
     }
-    return res
   })
-  console.log(
-    "DEBUG: posts/[...slug] paths:",
-    JSON.stringify(
-      paths.map((p) => p.params),
-      null,
-      2,
-    ),
-  )
-  return paths
-}
-type Props = CollectionEntry<"posts">
+}) satisfies GetStaticPaths
 
-const post = Astro.props
+export interface Props {
+  post: Post
+}
+
+const { post } = Astro.props
 const { Content } = await render(post)
+
+const t = useTranslations(post.lang)
+
+// Simple read time calculation helper
+// todo use plugin
+const getReadTime = (body: string | undefined): string => {
+  if (!body) return t("pages.posts.readTime").replace("{minutes}", "1")
+  const wordsPerMinute = 200
+  const words = body.trim().split(/\s+/).length
+  const minutes = Math.ceil(words / wordsPerMinute)
+  return t("pages.posts.readTime").replace("{minutes}", String(minutes))
+}
+
+const readTimeStr = getReadTime(post.body)
+
+// Get 3 post recommendations sorted by tag similarity
+const allPosts = await getPosts({ lang: post.lang })
+const currentSlug = post.slug
+const currentTags = post.data.tags || []
+const otherPosts = allPosts.filter((p) => p.slug !== currentSlug)
+
+const recommendations = [...otherPosts]
+  .sort((a, b) => {
+    const aMatches = a.data.tags?.filter((t) => currentTags.includes(t)).length || 0
+    const bMatches = b.data.tags?.filter((t) => currentTags.includes(t)).length || 0
+    return bMatches - aMatches
+  })
+  .slice(0, 3)
 ---
 
-<BlogPost {...post.data}>
-  <Content />
-</BlogPost>
+<Base title={post.data.title} description={post.data.description} image={post.data.coverImage}>
+  <div class="flex flex-col gap-6">
+    <article class="island overflow-hidden">
+      {
+        post.data.coverImage && (
+          <div class="border-outline h-64 w-full overflow-hidden border-b sm:h-96">
+            <Image
+              src={post.data.coverImage}
+              alt={post.data.title}
+              class="h-full w-full object-cover"
+            />
+          </div>
+        )
+      }
+
+      <div class="flex flex-col gap-6 p-6 sm:p-10">
+        <header class="flex flex-col gap-6">
+          <div
+            class="text-on-surface-variant flex flex-wrap items-center gap-3 text-sm font-semibold"
+          >
+            <div class="flex items-center gap-1.5">
+              <Calendar class="size-4" />
+              <FormattedDate date={post.data.publishedDate} />
+            </div>
+            <span>•</span>
+            <div class="flex items-center gap-1.5">
+              <BookOpen class="size-4" />
+              <span>{readTimeStr}</span>
+            </div>
+          </div>
+          <h1 class="text-brand font-heading text-4xl font-bold sm:text-5xl">
+            {post.data.title}
+          </h1>
+        </header>
+
+        <section class="prose prose-brand prose-stone dark:prose-invert max-w-none leading-relaxed">
+          <Content />
+        </section>
+
+        {
+          post.data.tags && post.data.tags.length > 0 && (
+            <footer class="border-outline mt-4 flex flex-wrap gap-2 border-t pt-6">
+              {post.data.tags.map((tag) => (
+                <span class="text-brand bg-brand/5 border-brand/10 rounded-lg border px-3 py-1 text-xs font-semibold">
+                  #{tag}
+                </span>
+              ))}
+            </footer>
+          )
+        }
+      </div>
+    </article>
+
+    {
+      /* Extract to component */
+      recommendations.length > 0 && (
+        <section class="mt-6 flex flex-col gap-6">
+          <div class="flex items-center gap-2">
+            <Heart class="text-brand size-5" />
+            <h3 class="text-on-surface font-heading text-2xl font-bold">
+              {t("pages.posts.recommendationsTitle")}
+            </h3>
+          </div>
+
+          <div class="grid grid-cols-1 gap-6 sm:grid-cols-3">
+            {recommendations.map((rec) => (
+              <a
+                href={rec.url}
+                class="island island-interactive group decoration-none flex flex-col overflow-hidden"
+              >
+                {rec.data.coverImage && (
+                  <div class="border-outline h-32 w-full overflow-hidden border-b">
+                    <Image
+                      src={rec.data.coverImage}
+                      alt={rec.data.title}
+                      class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-102"
+                    />
+                  </div>
+                )}
+                <div class="flex grow flex-col justify-between gap-2 p-4">
+                  <h4 class="text-on-surface group-hover:text-brand line-clamp-2 text-sm leading-snug font-bold transition-colors">
+                    {rec.data.title}
+                  </h4>
+                  <div class="text-on-surface-variant/60 text-[10px] font-semibold">
+                    <FormattedDate date={rec.data.publishedDate} />
+                  </div>
+                </div>
+              </a>
+            ))}
+          </div>
+        </section>
+      )
+    }
+  </div>
+</Base>

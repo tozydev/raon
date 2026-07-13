@@ -74,10 +74,12 @@ export const ui = {
       posts: {
         title: "Bài viết",
         description: "",
+        readTime: "{minutes} phút đọc",
         allPosts: {
           title: "Tất cả bài viết",
           empty: "Chưa có bài viết nào.",
         },
+        recommendationsTitle: "Có thể bạn quan tâm",
       },
       rss: {
         title: "RSS",
