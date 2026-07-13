@@ -18,7 +18,9 @@ const posts = (await getCollection("blog"))
 <section class="flex flex-col gap-6">
   <div class="flex w-full items-center justify-between">
     <div class="flex items-center gap-2">
-      <h2 class="text-on-surface text-2xl font-bold">{t("pages.home.recentPosts.title")}</h2>
+      <h2 class="text-on-surface font-heading text-2xl font-bold">
+        {t("pages.home.recentPosts.title")}
+      </h2>
     </div>
     <a
       href={translatePath(ROUTES.blog)}
