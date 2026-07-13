@@ -1,12 +1,12 @@
 ---
 import { ExternalLink } from "@lucide/astro"
 import { Image } from "astro:assets"
-import type { CollectionEntry } from "astro:content"
 import GitHub from "raon:assets/github.svg"
+import type { Project } from "raon:content"
 import { defaultLang, getLangFromUrl } from "raon:i18n"
 
 interface Props {
-  project: CollectionEntry<"projects">
+  project: Project
 }
 
 const { project } = Astro.props
