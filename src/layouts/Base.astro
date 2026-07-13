@@ -1,6 +1,5 @@
 ---
 import { Font } from "astro:assets"
-import FallbackImage from "raon:assets/blog-placeholder-2.jpg"
 import Footer from "raon:components/page/Footer.astro"
 import Header from "raon:components/page/Header.astro"
 import { ROUTES } from "raon:consts"
@@ -15,7 +14,7 @@ interface Props {
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site)
 
-const { title, description, image = FallbackImage } = Astro.props
+const { title, description, image } = Astro.props
 const lang = getLangFromUrl(Astro.url)
 const t = useTranslations(lang)
 const translatePath = useTranslatedPath(lang)
@@ -50,7 +49,7 @@ const translatePath = useTranslatedPath(lang)
     <meta property="og:url" content={Astro.url} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:image" content={new URL(image.src, Astro.url)} />
+    <!-- <meta property="og:image" content={new URL(image.src, Astro.url)} /> -->
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
