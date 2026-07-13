@@ -1,0 +1,42 @@
+---
+import type { GetStaticPaths } from "astro"
+import ProjectCard from "raon:components/projects/ProjectCard.astro"
+import { getProjects } from "raon:content"
+import { getLangPaths, useTranslations, type HasLang } from "raon:i18n"
+import Base from "raon:layouts/Base.astro"
+
+interface Props extends HasLang {}
+
+export const getStaticPaths = (() => {
+  return getLangPaths("projects", "/projects")
+}) satisfies GetStaticPaths
+
+const { lang } = Astro.props
+const t = useTranslations(lang)
+
+const projects = await getProjects()
+---
+
+<Base title={t("pages.projects.title")} description={t("pages.projects.description")}>
+  <section class="flex flex-col gap-6">
+    <div class="flex items-center gap-2">
+      <h2 class="text-on-surface font-heading text-2xl font-bold">
+        {t("pages.projects.allProjects.title")}
+      </h2>
+    </div>
+
+    {
+      projects.length > 0 ? (
+        <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+          {projects.map((project) => (
+            <ProjectCard project={project} />
+          ))}
+        </div>
+      ) : (
+        <div class="island flex flex-col items-center justify-center gap-4 p-12 text-center">
+          <p class="text-on-surface-variant">{t("pages.projects.allProjects.empty")}</p>
+        </div>
+      )
+    }
+  </section>
+</Base>

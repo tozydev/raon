@@ -63,6 +63,14 @@ export const ui = {
         title: "Giới thiệu",
         description: "",
       },
+      projects: {
+        title: "Dự án",
+        description: "",
+        allProjects: {
+          title: "Tất cả dự án",
+          empty: "Chưa có dự án nào.",
+        },
+      },
       posts: {
         title: "Bài viết",
         description: "",
