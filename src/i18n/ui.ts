@@ -61,7 +61,22 @@ export const ui = {
       },
       about: {
         title: "Giới thiệu",
-        description: "",
+        description: "Giới thiệu về Thanh Tân (Raon) - Software Developer",
+        skills: {
+          title: "Kỹ năng & Công nghệ",
+        },
+        journey: {
+          title: "Hành trình",
+          current: "Hiện tại",
+          future: "Tiếp theo",
+        },
+        contact: {
+          title: "Liên hệ",
+          subtitle: "Cùng nhau xây dựng",
+          description:
+            "Dù bạn có một công việc hợp đồng thú vị, cần tư vấn về kiến trúc React hiệu năng cao, hay chỉ muốn trò chuyện trao đổi—đừng ngần ngại liên hệ nhé.",
+          send: "Gửi Email",
+        },
       },
       projects: {
         title: "Dự án",

@@ -1,0 +1,63 @@
+---
+import { JOURNEYS } from "raon:consts"
+import { defaultLang, getLangFromUrl, useTranslations } from "raon:i18n"
+
+const lang = getLangFromUrl(Astro.url)
+const t = useTranslations(lang)
+---
+
+<section class="flex flex-col gap-6">
+  <div class="flex items-center gap-2">
+    <h2 class="text-on-surface font-heading text-2xl font-bold">
+      {t("pages.about.journey.title")}
+    </h2>
+  </div>
+
+  <div class="island relative flex flex-col gap-8 overflow-hidden p-8 sm:p-12">
+    {
+      JOURNEYS.map((item, index) => (
+        <div
+          class={`group relative flex w-full items-start gap-4 sm:gap-6 ${
+            item.isFuture ? "border-outline mt-6 border-t border-dashed pt-6" : ""
+          }`}
+        >
+          {index < JOURNEYS.length - 2 && (
+            <div class="bg-outline pointer-events-none absolute top-9 -bottom-5 left-4 w-px sm:left-5" />
+          )}
+
+          <div
+            class={`z-10 flex size-8 shrink-0 items-center justify-center rounded-xl border transition-colors sm:size-10 ${
+              item.isCurrent
+                ? "border-brand bg-brand/5 shadow-sm"
+                : item.isFuture
+                  ? "border-outline bg-surface-variant/40"
+                  : "border-outline bg-surface-variant/20"
+            }`}
+          >
+            <item.icon class:list={["size-4", item.isFuture ? "text-accent" : "text-brand"]} />
+          </div>
+
+          <div class="flex grow flex-col gap-1.5 pt-0.5">
+            <h3
+              class={`text-base font-bold tracking-wide sm:text-lg ${
+                item.isCurrent
+                  ? "text-brand"
+                  : item.isFuture
+                    ? "text-on-surface-variant"
+                    : "text-on-surface"
+              }`}
+            >
+              {item.period && item.period}
+              {item.isCurrent && t("pages.about.journey.current")}
+              {item.isFuture && t("pages.about.journey.future")}
+            </h3>
+
+            <p class="text-on-surface-variant text-sm leading-relaxed sm:text-base">
+              {item.text[lang] || item.text[defaultLang]}
+            </p>
+          </div>
+        </div>
+      ))
+    }
+  </div>
+</section>

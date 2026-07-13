@@ -1,0 +1,47 @@
+---
+import { Mail, MapPin, Send } from "@lucide/astro"
+import { PROFILE } from "raon:consts"
+import { defaultLang, getLangFromUrl, useTranslations } from "raon:i18n"
+
+const lang = getLangFromUrl(Astro.url)
+const t = useTranslations(lang)
+---
+
+<section class="flex flex-col gap-6">
+  <div class="flex items-center gap-2">
+    <Mail class="text-brand size-5" />
+    <h2 class="text-on-surface font-heading text-2xl font-bold">
+      {t("pages.about.contact.title")}
+    </h2>
+  </div>
+
+  <div
+    class="island flex flex-col items-start justify-between gap-6 p-6 sm:flex-row sm:items-center sm:p-8"
+  >
+    <div class="flex flex-col gap-2">
+      <h3 class="text-on-surface text-xl font-bold">{t("pages.about.contact.subtitle")}</h3>
+      <p class="text-on-surface-variant max-w-md text-sm leading-relaxed">
+        {t("pages.about.contact.description")}
+      </p>
+
+      <div class="mt-2 flex flex-col gap-1.5">
+        <div class="text-on-surface-variant flex items-center gap-2 text-sm">
+          <MapPin class="text-brand size-4" />
+          <span>{PROFILE.location[lang] || PROFILE.location[defaultLang]}</span>
+        </div>
+        <div class="text-on-surface-variant flex items-center gap-2 text-sm">
+          <Mail class="text-brand size-4" />
+          <span>{PROFILE.email}</span>
+        </div>
+      </div>
+    </div>
+
+    <a
+      href={`mailto:${PROFILE.email}`}
+      class="btn btn-brand justify-center self-stretch sm:self-auto"
+    >
+      <span>{t("pages.about.contact.send")}</span>
+      <Send class="size-4" />
+    </a>
+  </div>
+</section>

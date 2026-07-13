@@ -1,0 +1,51 @@
+---
+import { PROFILE } from "raon:consts"
+import { defaultLang, getLangFromUrl } from "raon:i18n"
+
+const lang = getLangFromUrl(Astro.url)
+
+const Story = await import(`./story.${lang}.md`)
+  .catch(() => import(`./story.${defaultLang}.md`))
+  .then((module) => module.Content)
+---
+
+<section class="island flex flex-col overflow-hidden">
+  <div class="relative z-10 h-48 w-full overflow-hidden sm:h-64">
+    <img
+      src="/images/about_cover.jpg"
+      alt="Scenic green field cover"
+      class="h-full w-full object-cover"
+    />
+    <div
+      class="from-surface pointer-events-none absolute inset-x-0 bottom-0 h-1/2 bg-linear-to-t to-transparent"
+    >
+    </div>
+  </div>
+
+  <div
+    class="border-surface bg-surface absolute top-36 left-1/2 z-20 h-24 w-24 -translate-x-1/2 overflow-hidden rounded-full border-4 shadow-md sm:top-48 sm:h-32 sm:w-32"
+  >
+    <img
+      src="/images/about_avatar.jpg"
+      alt={`${PROFILE.name} Avatar`}
+      class="h-full w-full object-cover"
+    />
+  </div>
+
+  <div class="relative flex flex-col items-center gap-6 p-8 pt-14 sm:p-12 sm:pt-20">
+    <div class="flex w-full flex-col items-center gap-1 text-center">
+      <h1 class="text-brand font-heading text-4xl font-bold tracking-tight sm:text-5xl">
+        {PROFILE.name}
+      </h1>
+      <p class="text-on-surface-variant text-xs font-bold tracking-widest uppercase sm:text-sm">
+        {PROFILE.role[lang]}
+      </p>
+    </div>
+
+    <div
+      class="text-on-surface-variant prose prose-sm sm:prose-base prose-p:text-on-surface-variant prose-strong:text-on-surface mt-2 flex max-w-2xl flex-col gap-4 text-center leading-relaxed"
+    >
+      <Story />
+    </div>
+  </div>
+</section>

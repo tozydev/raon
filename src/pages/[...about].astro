@@ -1,5 +1,9 @@
 ---
 import type { GetStaticPaths } from "astro"
+import Contact from "raon:components/about/Contact.astro"
+import Journey from "raon:components/about/Journey.astro"
+import Profile from "raon:components/about/Profile.astro"
+import Skills from "raon:components/about/Skills.astro"
 import { getLangPaths, useTranslations, type HasLang } from "raon:i18n"
 import Base from "raon:layouts/Base.astro"
 
@@ -14,8 +18,8 @@ const t = useTranslations(lang)
 ---
 
 <Base title={t("pages.about.title")} description={t("pages.about.description")}>
-  <p class="text-lg leading-relaxed text-slate-700">
-    Chào mừng bạn đến với trang giới thiệu của tôi. Đây là nội dung mẫu bằng Tiếng Việt giới thiệu
-    về bản thân, các dự án và định hướng cá nhân.
-  </p>
+  <Profile />
+  <Skills />
+  <Journey />
+  <Contact />
 </Base>

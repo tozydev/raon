@@ -1,0 +1,25 @@
+---
+import { PROFILE } from "raon:consts"
+import { getLangFromUrl, useTranslations } from "raon:i18n"
+
+const lang = getLangFromUrl(Astro.url)
+const t = useTranslations(lang)
+---
+
+<section class="flex flex-col gap-6">
+  <div class="flex items-center gap-2">
+    <h2 class="text-on-surface font-heading text-2xl font-bold">{t("pages.about.skills.title")}</h2>
+  </div>
+
+  <div class="island p-6 sm:p-8">
+    <div class="flex flex-wrap gap-2.5">
+      {
+        PROFILE.skills.map((skill) => (
+          <span class="text-on-surface-variant bg-surface-variant border-outline hover:border-brand hover:text-brand rounded-xl border px-3.5 py-1.5 text-xs font-semibold transition-colors sm:text-sm">
+            {skill}
+          </span>
+        ))
+      }
+    </div>
+  </div>
+</section>
