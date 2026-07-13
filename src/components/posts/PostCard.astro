@@ -1,20 +1,17 @@
 ---
 import { Image } from "astro:assets"
+import type { Post } from "raon:content"
 import FormattedDate from "../FormattedDate.astro"
-import type { CollectionEntry } from "astro:content"
 
 interface Props {
-  post: CollectionEntry<"posts">
-  lang: string
+  post: Post
 }
 
-const { post, lang } = Astro.props
-const slug = post.id.split("/")[0]
-const href = lang === "vi" ? `/posts/${slug}/` : `/${lang}/posts/${slug}/`
+const { post } = Astro.props
 ---
 
 <a
-  href={href}
+  href={post.url}
   class="island island-interactive group decoration-none flex cursor-pointer flex-col items-start gap-6 p-6 md:flex-row md:items-center"
 >
   {
@@ -31,7 +28,7 @@ const href = lang === "vi" ? `/posts/${slug}/` : `/${lang}/posts/${slug}/`
     )
   }
   <div class="flex grow flex-col gap-3 text-left">
-    <div class="text-on-surface-variant/60 flex flex-wrap items-center gap-2 text-xs font-semibold">
+    <div class="text-on-surface-variant flex flex-wrap items-center gap-2 text-xs font-semibold">
       <FormattedDate date={post.data.publishedDate} />
       <span>•</span>
       <span>5 min read</span>

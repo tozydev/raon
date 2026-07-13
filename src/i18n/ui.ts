@@ -66,6 +66,10 @@ export const ui = {
       posts: {
         title: "Bài viết",
         description: "",
+        allPosts: {
+          title: "Tất cả bài viết",
+          empty: "Chưa có bài viết nào.",
+        },
       },
       rss: {
         title: "RSS",

@@ -11,7 +11,11 @@ const localizedString = z
   })
 
 const posts = defineCollection({
-  loader: glob({ base: "./content/posts", pattern: "**/index.*.{md,mdx}" }),
+  loader: glob({
+    base: "./content/posts",
+    pattern: "**/index.*.{md,mdx}",
+    generateId: ({ entry }) => entry.replace("index.", "").replace(/\.(md|mdx)$/, ""),
+  }),
   schema: ({ image }) =>
     z.object({
       title: z.string(),

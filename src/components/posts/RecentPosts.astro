@@ -1,18 +1,15 @@
 ---
-import { getCollection } from "astro:content"
+import { ArrowRight } from "@lucide/astro"
+import { ROUTES } from "raon:consts"
+import { getPosts } from "raon:content"
 import { getLangFromUrl, useTranslatedPath, useTranslations } from "raon:i18n"
 import PostCard from "./PostCard.astro"
-import { ROUTES } from "raon:consts"
-import { ArrowRight } from "@lucide/astro"
 
 const lang = getLangFromUrl(Astro.url)
 const t = useTranslations(lang)
 const translatePath = useTranslatedPath(lang)
 
-const posts = (await getCollection("posts"))
-  .filter((post) => post.id.endsWith(`/index${lang}`))
-  .sort((a, b) => b.data.publishedDate.valueOf() - a.data.publishedDate.valueOf())
-  .slice(0, 3)
+const posts = await getPosts({ lang, limit: 3 })
 ---
 
 <section class="flex flex-col gap-6">
@@ -32,6 +29,6 @@ const posts = (await getCollection("posts"))
   </div>
 
   <div class="grid grid-cols-1 gap-6">
-    {posts.map((post) => <PostCard post={post} lang={lang} />)}
+    {posts.map((post) => <PostCard post={post} />)}
   </div>
 </section>
