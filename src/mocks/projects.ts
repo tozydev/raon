@@ -1,4 +1,4 @@
-import type { Project } from "@components/projects/ProjectCard.astro"
+import type { Project } from "raon:components/projects/ProjectCard.astro"
 
 export const mockProjects: Project[] = [
   {

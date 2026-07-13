@@ -1,10 +1,10 @@
 ---
-import Hero from "@components/home/Hero.astro"
-import RecentPosts from "@components/posts/RecentPosts.astro"
-import FeaturedProjects from "@components/projects/FeaturedProjects.astro"
-import Base from "@layouts/Base.astro"
 import type { GetStaticPaths } from "astro"
+import Hero from "raon:components/home/Hero.astro"
+import RecentPosts from "raon:components/posts/RecentPosts.astro"
+import FeaturedProjects from "raon:components/projects/FeaturedProjects.astro"
 import { getLangPaths, useTranslations, type HasLang } from "raon:i18n"
+import Base from "raon:layouts/Base.astro"
 
 interface Props extends HasLang {}
 

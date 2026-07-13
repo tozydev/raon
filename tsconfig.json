@@ -6,12 +6,12 @@
     "strictNullChecks": true,
     "verbatimModuleSyntax": true,
     "paths": {
-      "@assets/*": ["./src/assets/*"],
-      "@components/*": ["./src/components/*"],
-      "@layouts/*": ["./src/layouts/*"],
-      "raon:i18n": ["./src/i18n/index.ts"],
+      "raon:assets/*": ["./src/assets/*"],
       "raon:consts": ["./src/consts.ts"],
-      "@scripts/*": ["./src/scripts/*"]
+      "raon:components/*": ["./src/components/*"],
+      "raon:i18n": ["./src/i18n/index.ts"],
+      "raon:layouts/*": ["./src/layouts/*"],
+      "raon:scripts/*": ["./src/scripts/*"]
     }
   }
 }

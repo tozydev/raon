@@ -1,11 +1,11 @@
 ---
-import FallbackImage from "@assets/blog-placeholder-2.jpg"
-import Footer from "@components/page/Footer.astro"
-import Header from "@components/page/Header.astro"
+import { Font } from "astro:assets"
+import FallbackImage from "raon:assets/blog-placeholder-2.jpg"
+import Footer from "raon:components/page/Footer.astro"
+import Header from "raon:components/page/Header.astro"
 import { ROUTES } from "raon:consts"
 import { getLangFromUrl, useTranslatedPath, useTranslations } from "raon:i18n"
 import "../styles/global.css"
-import { Font } from "astro:assets"
 
 interface Props {
   title: string
@@ -55,7 +55,7 @@ const translatePath = useTranslatedPath(lang)
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
 
-    <script src="@scripts/load-theme.ts"></script>
+    <script src="raon:scripts/load-theme.ts"></script>
 
     <Font cssVariable="--font-nunito" preload />
     <Font cssVariable="--font-be-vietnam-pro" preload />

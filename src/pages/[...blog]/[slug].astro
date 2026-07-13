@@ -1,7 +1,7 @@
 ---
-import BlogPost from "@layouts/BlogPost.astro"
 import { getCollection, render, type CollectionEntry } from "astro:content"
 import { defaultLang, Languages, useTranslatedPath, type Language } from "raon:i18n"
+import BlogPost from "raon:layouts/BlogPost.astro"
 
 export async function getStaticPaths() {
   const posts = await getCollection("blog")
