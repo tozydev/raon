@@ -9,6 +9,7 @@
       "raon:assets/*": ["./src/assets/*"],
       "raon:consts": ["./src/consts.ts"],
       "raon:components/*": ["./src/components/*"],
+      "raon:content": ["./src/content/index.ts"],
       "raon:i18n": ["./src/i18n/index.ts"],
       "raon:layouts/*": ["./src/layouts/*"],
       "raon:scripts/*": ["./src/scripts/*"]
