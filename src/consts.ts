@@ -8,6 +8,7 @@ export const ROUTES = {
 
 export const PROFILE = {
   name: "Thanh Tân",
+  username: "tozydev",
   email: "me@tozydev.id.vn",
   socials: {
     github: "https://github.com/tozydev",

@@ -1,0 +1,88 @@
+tauri-editor:
+  title:
+    vi: "Tauri Editor"
+    en: "Tauri Editor"
+  description:
+    vi: "Một trình soạn thảo markdown tối giản, đẹp mắt được xây dựng bằng Tauri và React, tập trung vào trạng thái viết và lưu trữ dữ liệu cục bộ."
+    en: "A beautiful, minimalist markdown editor built with Tauri and React, focusing on write-state focus and local-first data storage."
+  featured: true
+  tags:
+    - "Rust"
+    - "React"
+    - "Tauri"
+    - "TypeScript"
+  github: "https://github.com"
+  link: "https://example.com"
+  coverImage: "./cover/tauri_editor.jpg"
+
+aura-db:
+  title:
+    vi: "Aura DB"
+    en: "Aura DB"
+  description:
+    vi: "Một cơ sở dữ liệu tài liệu gọn nhẹ, nhanh chóng, lưu trữ trong bộ nhớ với giao diện truy vấn giống SQL và hỗ trợ WebAssembly."
+    en: "A lightweight, fast, in-memory document database with SQL-like query interface and WebAssembly support."
+  featured: true
+  tags:
+    - "Go"
+    - "SQLite"
+    - "WebAssembly"
+  github: "https://github.com"
+  coverImage: "./cover/aura_db.jpg"
+
+tanstack-starter:
+  title:
+    vi: "TanStack Start Starter"
+    en: "TanStack Start Starter"
+  description:
+    vi: "Mẫu khởi đầu sẵn sàng cho sản xuất sử dụng TanStack Start, tích hợp Tailwind CSS v4, Bun và TypeScript."
+    en: "A production-ready starter template for TanStack Start, featuring Tailwind CSS v4, Bun, and TypeScript."
+  featured: true
+  tags:
+    - "React"
+    - "TanStack"
+    - "Tailwind v4"
+  github: "https://github.com"
+  link: "https://example.com"
+  coverImage: "./cover/tanstack_starter.jpg"
+
+spring-clean-api:
+  title:
+    vi: "Spring Clean API"
+    en: "Spring Clean API"
+  description:
+    vi: "Khung máy chủ microservice được thiết kế với Kotlin và Spring Boot, tối ưu hóa các nhóm kết nối cơ sở dữ liệu và các điểm cuối API."
+    en: "A microservice server scaffolding designed with Kotlin and Spring Boot, optimizing database connection pools and API endpoints."
+  tags:
+    - "Kotlin"
+    - "SpringBoot"
+    - "PostgreSQL"
+  github: "https://github.com"
+
+green-ui-pack:
+  title:
+    vi: "Green UI Pack"
+    en: "Green UI Pack"
+  description:
+    vi: "Bộ sưu tập các thành phần giao diện thẻ nổi tông màu thiên nhiên thanh bình và các thiết lập hoạt ảnh cho các trang web hiện đại."
+    en: "A collection of serene, nature-toned floating card UI elements and animation presets for modern websites."
+  tags:
+    - "CSS"
+    - "FramerMotion"
+    - "Design"
+  github: "https://github.com"
+  link: "https://example.com"
+  coverImage: "./cover/floating_island_blog.jpg"
+
+bunny-bench:
+  title:
+    vi: "Bunny Bench"
+    en: "Bunny Bench"
+  description:
+    vi: "Bộ công cụ tự động đo hiệu năng được thiết kế để kiểm tra các chỉ số biên dịch và thực thi runtime JS giữa Node và Bun."
+    en: "An automated benchmarking suite script designed to test JS compile and runtime execution metrics between Node and Bun."
+  tags:
+    - "Bun"
+    - "JavaScript"
+    - "Testing"
+  github: "https://github.com"

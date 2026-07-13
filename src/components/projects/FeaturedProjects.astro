@@ -1,15 +1,17 @@
 ---
 import { ArrowRight } from "@lucide/astro"
+import { getCollection } from "astro:content"
 import { ROUTES } from "raon:consts"
 import { getLangFromUrl, useTranslatedPath, useTranslations } from "raon:i18n"
-import { mockProjects } from "../../mocks/projects"
 import ProjectCard from "./ProjectCard.astro"
 
 const lang = getLangFromUrl(Astro.url)
 const t = useTranslations(lang)
 const translatePath = useTranslatedPath(lang)
 
-const projects = mockProjects.slice(0, 3)
+const projects = (await getCollection("projects"))
+  .filter((project) => project.data.featured)
+  .slice(0, 3)
 ---
 
 <section class="flex flex-col gap-6">

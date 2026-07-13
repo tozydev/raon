@@ -1,31 +1,28 @@
 ---
 import { ExternalLink } from "@lucide/astro"
+import { Image } from "astro:assets"
+import type { CollectionEntry } from "astro:content"
 import GitHub from "raon:assets/github.svg"
-
-// todo use content collection
-export interface Project {
-  title: string
-  description: string
-  tags: string[]
-  github: string
-  demo?: string
-  coverImage?: string
-}
+import { defaultLang, getLangFromUrl } from "raon:i18n"
 
 interface Props {
-  project: Project
+  project: CollectionEntry<"projects">
 }
 
 const { project } = Astro.props
+const lang = getLangFromUrl(Astro.url)
+
+const title = project.data.title[lang] || project.data.title[defaultLang]
+const description = project.data.description[lang] || project.data.description[defaultLang]
 ---
 
 <div class="island flex flex-col justify-between overflow-hidden">
   {
-    project.coverImage && (
+    project.data.coverImage && (
       <div class="border-outline h-48 w-full overflow-hidden border-b">
-        <img
-          src={project.coverImage}
-          alt={project.title}
+        <Image
+          src={project.data.coverImage}
+          alt={title}
           class="h-full w-full object-cover transition-transform duration-500 hover:scale-102"
         />
       </div>
@@ -35,21 +32,25 @@ const { project } = Astro.props
     <div class="flex flex-col gap-2">
       <div class="flex items-center justify-between">
         <h3 class="text-on-surface font-heading text-xl font-bold">
-          {project.title}
+          {title}
         </h3>
         <div class="flex items-center gap-3">
-          <a
-            href={project.github}
-            target="_blank"
-            class="link link-variant"
-            aria-label="GitHub Repository"
-          >
-            <GitHub class="size-5" />
-          </a>
           {
-            project.demo && (
+            project.data.github && (
               <a
-                href={project.demo}
+                href={project.data.github}
+                target="_blank"
+                class="link link-variant"
+                aria-label="GitHub Repository"
+              >
+                <GitHub class="size-5" />
+              </a>
+            )
+          }
+          {
+            project.data.link && (
+              <a
+                href={project.data.link}
                 target="_blank"
                 class="link link-variant"
                 aria-label="Live Demo"
@@ -61,18 +62,20 @@ const { project } = Astro.props
         </div>
       </div>
       <p class="text-on-surface-variant text-sm leading-relaxed">
-        {project.description}
+        {description}
       </p>
     </div>
 
-    <div class="flex flex-wrap gap-2">
-      {
-        project.tags.map((tag) => (
-          <span class="text-on-surface-variant bg-surface-variant border-outline rounded-lg border px-2.5 py-1 text-xs font-semibold">
-            {tag}
-          </span>
-        ))
-      }
-    </div>
+    {
+      project.data.tags && project.data.tags.length > 0 && (
+        <div class="flex flex-wrap gap-2">
+          {project.data.tags.map((tag) => (
+            <span class="text-on-surface-variant bg-surface-variant border-outline rounded-lg border px-2.5 py-1 text-xs font-semibold">
+              {tag}
+            </span>
+          ))}
+        </div>
+      )
+    }
   </div>
 </div>
