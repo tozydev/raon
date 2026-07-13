@@ -1,0 +1,54 @@
+---
+import Bluesky from "@assets/bluesky.svg"
+import GitHub from "@assets/github.svg"
+import { Mail, Rss } from "@lucide/astro"
+import { PROFILE } from "raon:consts"
+import { getLangFromUrl, useTranslatedPath, useTranslations } from "raon:i18n"
+
+const lang = getLangFromUrl(Astro.url)
+const t = useTranslations(lang)
+const translatePath = useTranslatedPath(lang)
+---
+
+<footer
+  class="island glass flex w-full flex-col items-center justify-between gap-4 p-6 sm:flex-row"
+>
+  <div class="flex items-center gap-1 text-sm">
+    {t("common.footer.copyright")}
+  </div>
+
+  <div class="flex items-center gap-4">
+    <a
+      href={PROFILE.socials.github}
+      target="_blank"
+      class="link"
+      aria-label={t("common.brand.github")}
+    >
+      <GitHub class="size-5" />
+    </a>
+    <a
+      href={PROFILE.socials.bluesky}
+      target="_blank"
+      class="link"
+      aria-label={t("common.brand.bluesky")}
+    >
+      <Bluesky class="size-5" />
+    </a>
+    <a
+      href={`mailto:${PROFILE.email}`}
+      target="_blank"
+      class="link"
+      aria-label={t("common.ariaLabel.email")}
+    >
+      <Mail class="size-5" />
+    </a>
+    <a
+      href={translatePath("/rss.xml")}
+      target="_blank"
+      class="link"
+      aria-label={t("common.ariaLabel.rss")}
+    >
+      <Rss class="size-5" />
+    </a>
+  </div>
+</footer>

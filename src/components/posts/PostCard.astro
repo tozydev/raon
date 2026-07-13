@@ -1,0 +1,58 @@
+---
+import { Image } from "astro:assets"
+import FormattedDate from "../FormattedDate.astro"
+import type { CollectionEntry } from "astro:content"
+
+interface Props {
+  post: CollectionEntry<"blog">
+  lang: string
+}
+
+const { post, lang } = Astro.props
+const slug = post.id.split("/")[0]
+const href = lang === "vi" ? `/blog/${slug}/` : `/${lang}/blog/${slug}/`
+---
+
+<a
+  href={href}
+  class="island island-interactive group decoration-none flex cursor-pointer flex-col items-start gap-6 p-6 md:flex-row md:items-center"
+>
+  {
+    post.data.coverImage && (
+      <div class="border-outline h-32 w-full shrink-0 overflow-hidden rounded-xl border md:w-48">
+        <Image
+          src={post.data.coverImage}
+          alt={post.data.title}
+          width={384}
+          height={256}
+          class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-102"
+        />
+      </div>
+    )
+  }
+  <div class="flex grow flex-col gap-3 text-left">
+    <div class="text-on-surface-variant/60 flex flex-wrap items-center gap-2 text-xs font-semibold">
+      <FormattedDate date={post.data.publishedDate} />
+      <span>•</span>
+      <span>5 min read</span>
+    </div>
+    <h3 class="text-on-surface group-hover:text-brand text-xl font-bold transition-colors">
+      {post.data.title}
+    </h3>
+    <p class="text-on-surface-variant text-sm leading-relaxed">
+      {post.data.description}
+    </p>
+
+    {
+      post.data.tags && post.data.tags.length > 0 && (
+        <div class="mt-1 flex flex-wrap gap-1.5">
+          {post.data.tags.map((tag) => (
+            <span class="text-brand bg-brand/5 rounded-md px-2.5 py-0.5 text-[11px] font-semibold">
+              #{tag}
+            </span>
+          ))}
+        </div>
+      )
+    }
+  </div>
+</a>

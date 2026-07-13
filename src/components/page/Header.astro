@@ -1,0 +1,106 @@
+---
+import { House, BookOpen, Code, User, Search, Sun, Moon, SunMoon } from "@lucide/astro"
+import { getLangFromUrl, useTranslatedPath, useTranslations } from "raon:i18n"
+import NavLink from "./NavLink.astro"
+import { ROUTES } from "raon:consts"
+
+const lang = getLangFromUrl(Astro.url)
+const t = useTranslations(lang)
+const translatePath = useTranslatedPath(lang)
+---
+
+<header class="island glass sticky top-4 z-50 flex w-full items-center justify-between px-6 py-4">
+  <div class="items-cente font-heading-headi flex w-1/4">
+    <a
+      href={translatePath(ROUTES.home)}
+      class="text-on-surface flex items-center text-xl font-bold tracking-tight transition-colors"
+    >
+      <span class="text-brand">tozy</span>dev
+    </a>
+  </div>
+
+  <nav class="hidden grow items-center justify-center gap-4 sm:flex">
+    <NavLink href={translatePath(ROUTES.home)}>
+      <House slot="icon" />
+      {t("common.nav.home")}
+    </NavLink>
+    <NavLink href={translatePath(ROUTES.blog)}>
+      <BookOpen slot="icon" />
+      {t("common.nav.blog")}
+    </NavLink>
+    <NavLink href={translatePath(ROUTES.projects)}>
+      <Code slot="icon" />
+      {t("common.nav.projects")}
+    </NavLink>
+    <NavLink href={translatePath(ROUTES.about)}>
+      <User slot="icon" />
+      {t("common.nav.about")}
+    </NavLink>
+  </nav>
+
+  <div class="flex w-1/4 items-center justify-end gap-2">
+    <button class="icon-btn" aria-label={t("common.ariaLabel.search")}>
+      <Search />
+    </button>
+
+    <button id="theme-toggle" class="icon-btn" aria-label={t("common.ariaLabel.themeSwitcher")}>
+      <span class="theme-icon-auto hidden"><SunMoon /></span>
+      <span class="theme-icon-light hidden"><Sun /></span>
+      <span class="theme-icon-dark hidden"><Moon /></span>
+    </button>
+  </div>
+</header>
+
+<script>
+  const toggleBtn = document.getElementById("theme-toggle")
+  const autoIcon = toggleBtn?.querySelector(".theme-icon-auto")
+  const lightIcon = toggleBtn?.querySelector(".theme-icon-light")
+  const darkIcon = toggleBtn?.querySelector(".theme-icon-dark")
+
+  function updateIcons(theme: string) {
+    switch (theme) {
+      case "dark":
+        autoIcon?.classList.add("hidden")
+        lightIcon?.classList.add("hidden")
+        darkIcon?.classList.remove("hidden")
+        break
+      case "light":
+        autoIcon?.classList.add("hidden")
+        lightIcon?.classList.remove("hidden")
+        darkIcon?.classList.add("hidden")
+        break
+      default:
+        autoIcon?.classList.remove("hidden")
+        lightIcon?.classList.add("hidden")
+        darkIcon?.classList.add("hidden")
+        break
+    }
+  }
+
+  function setTheme(theme: string) {
+    document.documentElement.classList.remove("light", "dark")
+    if (theme === "auto") {
+      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches
+      document.documentElement.classList.add(prefersDark ? "dark" : "light")
+      document.documentElement.removeAttribute("data-theme")
+      document.documentElement.style.colorScheme = prefersDark ? "dark" : "light"
+    } else {
+      document.documentElement.classList.add(theme)
+      document.documentElement.setAttribute("data-theme", theme)
+      document.documentElement.style.colorScheme = theme
+    }
+  }
+
+  var stored = window.localStorage.getItem("theme")
+  var currentTheme = stored === "light" || stored === "dark" || stored === "auto" ? stored : "auto"
+  updateIcons(currentTheme)
+
+  toggleBtn?.addEventListener("click", () => {
+    const nextTheme = currentTheme === "light" ? "dark" : currentTheme === "dark" ? "auto" : "light"
+    currentTheme = nextTheme
+    localStorage.setItem("theme", nextTheme)
+    setTheme(nextTheme)
+
+    updateIcons(nextTheme)
+  })
+</script>

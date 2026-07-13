@@ -1,8 +1,7 @@
 import mdx from "@astrojs/mdx"
 import sitemap from "@astrojs/sitemap"
-import { defineConfig } from "astro/config"
-
 import tailwindcss from "@tailwindcss/vite"
+import { defineConfig, fontProviders } from "astro/config"
 
 // https://astro.build/config
 export default defineConfig({
@@ -21,5 +20,32 @@ export default defineConfig({
       prefixDefaultLocale: false,
     },
   },
-  fonts: [],
+  fonts: [
+    {
+      provider: fontProviders.fontsource(),
+      name: "Nunito",
+      cssVariable: "--font-nunito",
+      fallbacks: ["sans-serif"],
+      weights: [700],
+      styles: ["normal"],
+      subsets: ["latin", "latin-ext", "vietnamese"],
+    },
+    {
+      provider: fontProviders.fontsource(),
+      name: "Be Vietnam Pro",
+      cssVariable: "--font-be-vietnam-pro",
+      fallbacks: ["sans-serif"],
+      weights: [400, 600, 700],
+      subsets: ["latin", "latin-ext", "vietnamese"],
+    },
+    {
+      provider: fontProviders.fontsource(),
+      name: "JetBrains Mono",
+      cssVariable: "--font-jetbrains-mono",
+      fallbacks: ["monospace"],
+      weights: [400],
+      styles: ["normal"],
+      subsets: ["latin", "latin-ext", "vietnamese"],
+    },
+  ],
 })

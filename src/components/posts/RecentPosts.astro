@@ -1,0 +1,35 @@
+---
+import { getCollection } from "astro:content"
+import { getLangFromUrl, useTranslatedPath, useTranslations } from "raon:i18n"
+import PostCard from "./PostCard.astro"
+import { ROUTES } from "raon:consts"
+import { ArrowRight } from "@lucide/astro"
+
+const lang = getLangFromUrl(Astro.url)
+const t = useTranslations(lang)
+const translatePath = useTranslatedPath(lang)
+
+const posts = (await getCollection("blog"))
+  .filter((post) => post.id.endsWith(`/index${lang}`))
+  .sort((a, b) => b.data.publishedDate.valueOf() - a.data.publishedDate.valueOf())
+  .slice(0, 3)
+---
+
+<section class="flex flex-col gap-6">
+  <div class="flex w-full items-center justify-between">
+    <div class="flex items-center gap-2">
+      <h2 class="text-on-surface text-2xl font-bold">{t("pages.home.recentPosts.title")}</h2>
+    </div>
+    <a
+      href={translatePath(ROUTES.blog)}
+      class="text-brand hover:text-on-surface flex cursor-pointer items-center gap-1 text-sm font-semibold transition-colors"
+    >
+      {t("common.buttons.viewMore")}
+      <ArrowRight class="size-4" />
+    </a>
+  </div>
+
+  <div class="grid grid-cols-1 gap-6">
+    {posts.map((post) => <PostCard post={post} lang={lang} />)}
+  </div>
+</section>

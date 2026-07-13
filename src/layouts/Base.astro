@@ -1,9 +1,11 @@
 ---
-import Footer from "@components/Footer.astro"
-import Header from "@components/Header.astro"
-import { getLangFromUrl, useTranslations } from "raon:i18n"
 import FallbackImage from "@assets/blog-placeholder-2.jpg"
+import Footer from "@components/page/Footer.astro"
+import Header from "@components/page/Header.astro"
+import { ROUTES } from "raon:consts"
+import { getLangFromUrl, useTranslatedPath, useTranslations } from "raon:i18n"
 import "../styles/global.css"
+import { Font } from "astro:assets"
 
 interface Props {
   title: string
@@ -16,10 +18,11 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site)
 const { title, description, image = FallbackImage } = Astro.props
 const lang = getLangFromUrl(Astro.url)
 const t = useTranslations(lang)
+const translatePath = useTranslatedPath(lang)
 ---
 
 <!doctype html>
-<html lang={lang} class="scroll-smooth">
+<html lang={lang}>
   <head>
     <!-- Global Metadata -->
     <meta charset="utf-8" />
@@ -31,7 +34,7 @@ const t = useTranslations(lang)
       rel="alternate"
       type="application/rss+xml"
       title={t("pages.rss.title")}
-      href={new URL("rss.xml", Astro.site)}
+      href={new URL(translatePath(ROUTES.rss), Astro.site)}
     />
     <meta name="generator" content={Astro.generator} />
 
@@ -51,12 +54,20 @@ const t = useTranslations(lang)
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
+
+    <script src="@scripts/load-theme.ts"></script>
+
+    <Font cssVariable="--font-nunito" preload />
+    <Font cssVariable="--font-be-vietnam-pro" preload />
+    <Font cssVariable="--font-jetbrains-mono" />
   </head>
-  <body class="flex min-h-screen flex-col bg-slate-50 font-sans text-slate-800 antialiased">
-    <Header />
-    <main class="mx-auto w-full max-w-4xl grow px-4 py-8 md:py-12">
-      <slot />
-    </main>
-    <Footer />
+  <body>
+    <div class="mx-auto flex min-h-screen w-full max-w-205 grow flex-col gap-8 px-4 py-8">
+      <Header />
+      <main class="flex grow flex-col gap-16">
+        <slot />
+      </main>
+      <Footer />
+    </div>
   </body>
 </html>

@@ -1,0 +1,35 @@
+---
+import GitHub from "@assets/github.svg"
+import { ArrowRightIcon } from "@lucide/astro"
+import { PROFILE, ROUTES } from "raon:consts"
+import { getLangFromUrl, useTranslatedPath, useTranslations } from "raon:i18n"
+
+const lang = getLangFromUrl(Astro.url)
+const t = useTranslations(lang)
+const translatePath = useTranslatedPath(lang)
+---
+
+<section class="island flex flex-col items-start gap-6 overflow-hidden p-8 text-left sm:p-12">
+  <h1
+    class="text-on-surface font-heading text-3xl leading-tight font-bold tracking-tight sm:text-4xl"
+  >
+    {t("pages.home.hero.gretting")}
+    <br />
+    <span class="text-brand text-4xl sm:text-6xl">{PROFILE.name}</span>.
+  </h1>
+
+  <p class="text-on-surface-variant max-w-2xl text-lg leading-relaxed">
+    {t("pages.home.hero.introduction")}
+  </p>
+
+  <div class="mt-2 flex flex-wrap items-center gap-4">
+    <a href={translatePath(ROUTES.about)} class="btn btn-brand">
+      {t("common.buttons.moreAbout")}
+      <ArrowRightIcon class="size-5" />
+    </a>
+    <a href={PROFILE.socials.github} target="_blank" rel="noopener noreferrer" class="btn">
+      <GitHub class="size-5" />
+      {t("common.brand.github")}
+    </a>
+  </div>
+</section>

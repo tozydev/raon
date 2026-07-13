@@ -1,4 +1,7 @@
 ---
+import Hero from "@components/home/Hero.astro"
+import RecentPosts from "@components/posts/RecentPosts.astro"
+import FeaturedProjects from "@components/projects/FeaturedProjects.astro"
 import Base from "@layouts/Base.astro"
 import type { GetStaticPaths } from "astro"
 import { getLangPaths, useTranslations, type HasLang } from "raon:i18n"
@@ -14,19 +17,7 @@ const t = useTranslations(lang)
 ---
 
 <Base title={t("pages.home.title")} description={t("pages.home.description")}>
-  <div class="space-y-6">
-    <h1 class="text-3xl font-extrabold tracking-tight text-slate-900 md:text-4xl">🧑‍🚀 Xin chào!</h1>
-    <p class="text-lg leading-relaxed text-slate-600">
-      Chào mừng bạn đến với trang web cá nhân được xây dựng bằng{" "}
-      <a href="https://astro.build/" class="font-semibold text-indigo-600 hover:underline">
-        Astro
-      </a>
-      . Mẫu giao diện này là điểm khởi đầu nhẹ nhàng và tối giản cho bất kỳ ai muốn tạo trang web cá nhân,
-      blog hoặc danh mục hồ sơ công việc.
-    </p>
-    <p class="text-lg leading-relaxed text-slate-600">
-      Mẫu này đi kèm với một vài công cụ tích hợp sẵn được cấu hình trong tệp cấu hình của bạn. Bạn
-      có thể tùy chỉnh thiết lập của mình để thêm các thư viện mong muốn.
-    </p>
-  </div>
+  <Hero />
+  <FeaturedProjects />
+  <RecentPosts />
 </Base>

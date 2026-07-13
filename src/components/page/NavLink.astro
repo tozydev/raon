@@ -1,0 +1,30 @@
+---
+import type { HTMLAttributes } from "astro/types"
+import { pathHasLocale } from "astro:i18n"
+
+type Props = Omit<HTMLAttributes<"a">, "href"> & {
+  href: string
+}
+
+const { href, class: className, ...props } = Astro.props
+const pathname = Astro.url.pathname.replace(import.meta.env.BASE_URL, "").replace(/\/$/, "")
+
+const subpath = pathname.match(/[^/]+/g)
+
+const isActive =
+  href === pathname ||
+  href === `/${subpath?.[0] || ""}${pathHasLocale(pathname) ? `/${subpath?.[1] || ""}` : ""}`
+---
+
+<a
+  href={href}
+  data-active={isActive ? "" : undefined}
+  class:list={[
+    className,
+    "text-on-surface-variant hover:text-brand data-active:text-brand flex items-center gap-1.5 text-sm font-semibold transition-colors [&_svg]:size-4",
+  ]}
+  {...props}
+>
+  <slot name="icon" />
+  <span class="hidden sm:inline"><slot /></span>
+</a>

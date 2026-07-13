@@ -1,1 +1,94 @@
 @import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-bg-start: #f4f6f4;
+  --color-bg-end: #e8ede9;
+  --color-surface: #ffffff;
+  --color-surface-variant: #f0f3f1;
+  --color-on-surface: #1c2826;
+  --color-on-surface-variant: #4f5d59;
+  --color-brand: #2d6a4f;
+  --color-on-brand: #ffffff;
+  --color-accent: #c05621;
+  --color-outline: #e0e5e2;
+
+  --shadow-island: 0 8px 32px rgba(0, 0, 0, 0.05), 0 4px 12px rgba(0, 0, 0, 0.04);
+  --shadow-island-hover: 0 12px 40px rgba(0, 0, 0, 0.08), 0 6px 16px rgba(0, 0, 0, 0.06);
+}
+
+@theme inline {
+  --font-heading: var(--font-nunito);
+  --font-body: var(--font-be-vietnam-pro);
+  --font-sans: var(--font-body);
+  --font-mono: var(--font-jetbrains-mono);
+}
+
+.dark {
+  --color-bg-start: #111815;
+  --color-bg-end: #0b100d;
+  --color-surface: #18221f;
+  --color-surface-variant: #23302c;
+  --color-on-surface: #f0f4f1;
+  --color-on-surface-variant: #a0b0a8;
+  --color-brand: #3e8e63;
+  --color-on-brand: #0b100d;
+  --color-accent: #dd6b20;
+  --color-outline: #2a3934;
+
+  --shadow-island: 0 10px 40px rgba(0, 0, 0, 0.4), 0 4px 16px rgba(0, 0, 0, 0.3);
+  --shadow-island-hover: 0 16px 48px rgba(0, 0, 0, 0.5), 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+@layer base {
+  body {
+    @apply text-on-surface from-bg-start to-bg-end font-body min-h-screen scroll-smooth bg-gradient-to-b text-base font-normal antialiased;
+  }
+}
+
+@layer components {
+  .island {
+    @apply bg-surface border-outline relative rounded-xl border transition-all duration-300;
+    box-shadow: var(--shadow-island);
+  }
+
+  .island-interactive:hover {
+    @apply border-brand -translate-y-[2px];
+    box-shadow: var(--shadow-island-hover);
+  }
+
+  .btn {
+    @apply bg-surface-variant text-on-surface inline-flex cursor-pointer items-center gap-2 rounded-lg border-none px-4 py-2 font-semibold transition-all duration-200 ease-in-out;
+  }
+
+  .btn:hover {
+    background-color: color-mix(in srgb, var(--color-surface-variant) 90%, var(--color-on-surface));
+  }
+
+  .btn-brand {
+    @apply bg-brand text-on-brand;
+  }
+
+  .btn-brand:hover {
+    background-color: color-mix(in srgb, var(--color-brand) 88%, var(--color-on-surface));
+  }
+
+  .icon-btn {
+    @apply text-on-surface-variant hover:text-brand hover:bg-surface-variant cursor-pointer rounded-lg p-1.5 transition-colors [&_svg]:size-4;
+  }
+
+  .link {
+    @apply hover:text-brand cursor-pointer transition-colors;
+  }
+
+  .link-variant {
+    @apply text-on-surface-variant;
+  }
+}
+
+@layer utilities {
+  .glass {
+    @apply bg-surface/70 border-outline/80 backdrop-blur-lg;
+  }
+}
