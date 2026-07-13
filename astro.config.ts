@@ -5,10 +5,27 @@ import { defineConfig, fontProviders } from "astro/config"
 
 // https://astro.build/config
 export default defineConfig({
-  site: "https://tozydev.id.vn",
+  site: process.env.SITE_URL || "https://tozydev.id.vn",
   integrations: [mdx(), sitemap()],
   vite: {
     plugins: [tailwindcss()],
+    build: {
+      rolldownOptions: {
+        output: {
+          assetFileNames: ({ names }) => {
+            // Main CSS
+            if (names.includes("Base.css")) {
+              return "_raon/css/raon.[hash][extname]"
+            }
+            // Images
+            if (names.find((name) => /\.(png|jpe?g|gif|svg|webp|avif)$/.test(name))) {
+              return "_raon/images/[name].[hash][extname]"
+            }
+            return "_raon/[name].[hash][extname]"
+          },
+        },
+      },
+    },
   },
   build: {
     assets: "_raon",
