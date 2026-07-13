@@ -23,7 +23,7 @@ export const ui = {
       },
       nav: {
         home: "Trang chủ",
-        blog: "Blog",
+        posts: "Bài viết",
         projects: "Dự án",
         about: "Giới thiệu",
       },
@@ -63,8 +63,8 @@ export const ui = {
         title: "Giới thiệu",
         description: "",
       },
-      blog: {
-        title: "Blog",
+      posts: {
+        title: "Bài viết",
         description: "",
       },
       rss: {

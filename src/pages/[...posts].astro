@@ -9,13 +9,13 @@ import Base from "raon:layouts/Base.astro"
 interface Props extends HasLang {}
 
 export const getStaticPaths = (() => {
-  return getLangPaths("blog", "/blog")
+  return getLangPaths("posts", "/posts")
 }) satisfies GetStaticPaths
 
 const { lang } = Astro.props
 const t = useTranslations(lang)
 
-const posts = (await getCollection("blog"))
+const posts = (await getCollection("posts"))
   .filter((post) => post.id.endsWith(`/index${lang}`))
   .map((post) => {
     const slug = post.id.split("/")[0]
@@ -33,7 +33,7 @@ const posts = (await getCollection("blog"))
           return (
             <div class={isFirst ? "group md:col-span-2" : "group"}>
               <a
-                href={lang === "vi" ? `/blog/${post.slug}/` : `/${lang}/blog/${post.slug}/`}
+                href={lang === "vi" ? `/posts/${post.slug}/` : `/${lang}/posts/${post.slug}/`}
                 class="block space-y-4"
               >
                 {post.data.coverImage && (

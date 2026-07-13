@@ -10,8 +10,8 @@ const localizedString = z
     message: `Missing default language key: ${defaultLang}`,
   })
 
-const blog = defineCollection({
-  loader: glob({ base: "./content/blog", pattern: "**/index.*.{md,mdx}" }),
+const posts = defineCollection({
+  loader: glob({ base: "./content/posts", pattern: "**/index.*.{md,mdx}" }),
   schema: ({ image }) =>
     z.object({
       title: z.string(),
@@ -39,4 +39,4 @@ const projects = defineCollection({
     }),
 })
 
-export const collections = { blog, projects }
+export const collections = { posts, projects }

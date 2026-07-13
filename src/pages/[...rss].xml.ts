@@ -13,7 +13,7 @@ export const GET: APIRoute<Props> = async ({ site, props }) => {
   const lang = props.lang
   const translatePath = useTranslatedPath(lang)
   const t = useTranslations(lang)
-  const posts = await getCollection("blog")
+  const posts = await getCollection("posts")
 
   // Filter posts by language based on filename structure (slugified ID)
   const filteredPosts = posts
@@ -26,7 +26,7 @@ export const GET: APIRoute<Props> = async ({ site, props }) => {
     site: site || "",
     items: filteredPosts.map((post) => {
       const slug = post.id.split("/")[0]
-      const link = translatePath(`/blog/${slug}/`, lang)
+      const link = translatePath(`/posts/${slug}/`, lang)
       return {
         title: post.data.title,
         pubDate: post.data.publishedDate,

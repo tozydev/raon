@@ -9,7 +9,7 @@ const lang = getLangFromUrl(Astro.url)
 const t = useTranslations(lang)
 const translatePath = useTranslatedPath(lang)
 
-const posts = (await getCollection("blog"))
+const posts = (await getCollection("posts"))
   .filter((post) => post.id.endsWith(`/index${lang}`))
   .sort((a, b) => b.data.publishedDate.valueOf() - a.data.publishedDate.valueOf())
   .slice(0, 3)
@@ -23,7 +23,7 @@ const posts = (await getCollection("blog"))
       </h2>
     </div>
     <a
-      href={translatePath(ROUTES.blog)}
+      href={translatePath(ROUTES.posts)}
       class="text-brand hover:text-on-surface flex cursor-pointer items-center gap-1 text-sm font-semibold transition-colors"
     >
       {t("common.buttons.viewMore")}

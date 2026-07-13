@@ -4,7 +4,7 @@ import { defaultLang, Languages, useTranslatedPath, type Language } from "raon:i
 import BlogPost from "raon:layouts/BlogPost.astro"
 
 export async function getStaticPaths() {
-  const posts = await getCollection("blog")
+  const posts = await getCollection("posts")
   const paths = posts.map((post) => {
     const parts = post.id.split("/")
     const slug = parts[0]
@@ -12,13 +12,13 @@ export async function getStaticPaths() {
     const lang = Object.values(Languages).includes(fileLang as Language) ? fileLang : defaultLang
 
     const res = {
-      params: { blog: useTranslatedPath(lang as Language)("/blog"), slug },
+      params: { posts: useTranslatedPath(lang as Language)("/posts"), slug },
       props: post,
     }
     return res
   })
   console.log(
-    "DEBUG: blog/[...slug] paths:",
+    "DEBUG: posts/[...slug] paths:",
     JSON.stringify(
       paths.map((p) => p.params),
       null,
@@ -27,7 +27,7 @@ export async function getStaticPaths() {
   )
   return paths
 }
-type Props = CollectionEntry<"blog">
+type Props = CollectionEntry<"posts">
 
 const post = Astro.props
 const { Content } = await render(post)

@@ -1,6 +1,6 @@
 export const ROUTES = {
   home: "/",
-  blog: "/blog",
+  posts: "/posts",
   projects: "/projects",
   about: "/about",
   rss: "/rss.xml",

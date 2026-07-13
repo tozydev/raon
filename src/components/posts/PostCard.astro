@@ -4,13 +4,13 @@ import FormattedDate from "../FormattedDate.astro"
 import type { CollectionEntry } from "astro:content"
 
 interface Props {
-  post: CollectionEntry<"blog">
+  post: CollectionEntry<"posts">
   lang: string
 }
 
 const { post, lang } = Astro.props
 const slug = post.id.split("/")[0]
-const href = lang === "vi" ? `/blog/${slug}/` : `/${lang}/blog/${slug}/`
+const href = lang === "vi" ? `/posts/${slug}/` : `/${lang}/posts/${slug}/`
 ---
 
 <a
