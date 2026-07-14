@@ -58,26 +58,6 @@
     box-shadow: var(--shadow-island-hover);
   }
 
-  .btn {
-    @apply bg-surface-variant text-on-surface inline-flex cursor-pointer items-center gap-2 rounded-lg border-none px-4 py-2 font-semibold transition-all duration-200 ease-in-out;
-  }
-
-  .btn:hover {
-    background-color: color-mix(in srgb, var(--color-surface-variant) 90%, var(--color-on-surface));
-  }
-
-  .btn-brand {
-    @apply bg-brand text-on-brand;
-  }
-
-  .btn-brand:hover {
-    background-color: color-mix(in srgb, var(--color-brand) 88%, var(--color-on-surface));
-  }
-
-  .icon-btn {
-    @apply text-on-surface-variant hover:text-brand hover:bg-surface-variant cursor-pointer rounded-lg p-1.5 transition-colors [&_svg]:size-4;
-  }
-
   .link {
     @apply hover:text-brand cursor-pointer transition-colors;
   }
@@ -90,5 +70,71 @@
 @layer utilities {
   .glass {
     @apply bg-surface/70 border-outline/80 backdrop-blur-lg;
+  }
+}
+
+@layer components {
+  .btn {
+    --size: calc(var(--spacing, 0.25rem) * 10);
+    --btn-px: 1rem;
+    --btn-bg: var(--color-surface-variant);
+    --btn-fg: var(--color-on-surface);
+    --btn-border: transparent;
+    --btn-hover: color-mix(in srgb, var(--color-surface-variant) 90%, var(--color-on-surface));
+
+    @apply inline-flex cursor-pointer items-center justify-center gap-1.5 rounded-lg border text-base font-semibold transition-all duration-200 ease-in-out select-none;
+
+    height: var(--size);
+    padding-inline: var(--btn-px);
+    background-color: var(--btn-bg);
+    color: var(--btn-fg);
+    border-color: var(--btn-border);
+
+    &:hover {
+      background-color: var(--btn-hover);
+    }
+  }
+
+  .btn-brand {
+    --btn-bg: var(--color-brand);
+    --btn-fg: var(--color-on-brand);
+    --btn-hover: color-mix(in srgb, var(--color-brand) 88%, var(--color-on-surface));
+  }
+
+  .btn-outline {
+    --btn-bg: transparent;
+    --btn-fg: var(--color-on-surface);
+    --btn-border: var(--color-outline);
+    --btn-hover: var(--color-surface-variant);
+
+    &:hover {
+      border-color: color-mix(in srgb, var(--color-outline) 70%, var(--color-on-surface));
+    }
+  }
+
+  .btn-ghost {
+    --btn-bg: transparent;
+    --btn-fg: var(--color-on-surface-variant);
+    --btn-hover: var(--color-surface-variant);
+
+    &:hover {
+      color: var(--color-on-surface);
+    }
+  }
+
+  .btn-sm {
+    --size: calc(var(--spacing, 0.25rem) * 8);
+    --btn-px: 0.75rem;
+    @apply text-sm;
+  }
+
+  .btn-square {
+    @apply px-0;
+    width: var(--size);
+  }
+
+  .btn-circle {
+    @apply rounded-full px-0;
+    width: var(--size);
   }
 }

@@ -38,12 +38,19 @@ const translatePath = useTranslatedPath(lang)
     </NavLink>
   </nav>
 
-  <div class="flex w-1/4 items-center justify-end gap-2">
-    <button class="icon-btn" aria-label={t("common.ariaLabel.search")}>
+  <div class="flex w-1/4 items-center justify-end gap-1">
+    <button
+      class="btn btn-square hover:text-brand btn-ghost btn-sm [&_svg]:size-4"
+      aria-label={t("common.ariaLabel.search")}
+    >
       <Search />
     </button>
 
-    <button id="theme-toggle" class="icon-btn" aria-label={t("common.ariaLabel.themeSwitcher")}>
+    <button
+      id="theme-toggle"
+      class="btn btn-square btn-ghost btn-sm hover:text-brand [&_svg]:size-4"
+      aria-label={t("common.ariaLabel.themeSwitcher")}
+    >
       <span class="theme-icon-auto hidden"><SunMoon /></span>
       <span class="theme-icon-light hidden"><Sun /></span>
       <span class="theme-icon-dark hidden"><Moon /></span>
