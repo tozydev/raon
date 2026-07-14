@@ -1,0 +1,34 @@
+---
+import { BookOpen, Code, House, User } from "@lucide/astro"
+import type { HTMLAttributes } from "astro/types"
+import { ROUTES } from "raon:consts"
+import { getLangFromUrl, useTranslatedPath, useTranslations } from "raon:i18n"
+import NavLink from "./NavLink.astro"
+
+type Props = HTMLAttributes<"nav">
+
+const { ...props } = Astro.props
+
+const lang = getLangFromUrl(Astro.url)
+const t = useTranslations(lang)
+const translatePath = useTranslatedPath(lang)
+---
+
+<nav {...props}>
+  <NavLink href={translatePath(ROUTES.home)}>
+    <House slot="icon" />
+    {t("common.nav.home")}
+  </NavLink>
+  <NavLink href={translatePath(ROUTES.posts)}>
+    <BookOpen slot="icon" />
+    {t("common.nav.posts")}
+  </NavLink>
+  <NavLink href={translatePath(ROUTES.projects)}>
+    <Code slot="icon" />
+    {t("common.nav.projects")}
+  </NavLink>
+  <NavLink href={translatePath(ROUTES.about)}>
+    <User slot="icon" />
+    {t("common.nav.about")}
+  </NavLink>
+</nav>

@@ -1,7 +1,7 @@
 ---
-import { House, BookOpen, Code, User, Search, Sun, Moon, SunMoon } from "@lucide/astro"
+import { Search, Sun, Moon, SunMoon, Menu, X } from "@lucide/astro"
 import { getLangFromUrl, useTranslatedPath, useTranslations } from "raon:i18n"
-import NavLink from "./NavLink.astro"
+import NavLinks from "./NavLinks.astro"
 import { ROUTES } from "raon:consts"
 
 const lang = getLangFromUrl(Astro.url)
@@ -9,54 +9,53 @@ const t = useTranslations(lang)
 const translatePath = useTranslatedPath(lang)
 ---
 
-<header class="island glass sticky top-4 z-50 flex w-full items-center justify-between px-6 py-4">
-  <div class="items-cente font-heading-headi flex w-1/4">
-    <a
-      href={translatePath(ROUTES.home)}
-      class="text-on-surface flex items-center text-xl font-bold tracking-tight transition-colors"
-    >
-      <span class="text-brand">tozy</span>dev
-    </a>
-  </div>
+<div id="header-container" class="sticky top-4 z-50 w-full">
+  <header class="island glass flex w-full items-center justify-between px-6 py-4">
+    <div class="font-heading flex items-center md:w-1/4">
+      <a
+        href={translatePath(ROUTES.home)}
+        class="text-on-surface flex items-center text-xl font-bold tracking-tight transition-colors"
+      >
+        <span class="text-brand">tozy</span>dev
+      </a>
+    </div>
 
-  <nav class="hidden grow items-center justify-center gap-4 sm:flex">
-    <NavLink href={translatePath(ROUTES.home)}>
-      <House slot="icon" />
-      {t("common.nav.home")}
-    </NavLink>
-    <NavLink href={translatePath(ROUTES.posts)}>
-      <BookOpen slot="icon" />
-      {t("common.nav.posts")}
-    </NavLink>
-    <NavLink href={translatePath(ROUTES.projects)}>
-      <Code slot="icon" />
-      {t("common.nav.projects")}
-    </NavLink>
-    <NavLink href={translatePath(ROUTES.about)}>
-      <User slot="icon" />
-      {t("common.nav.about")}
-    </NavLink>
-  </nav>
+    <NavLinks class="hidden grow items-center justify-center gap-4 md:flex" />
 
-  <div class="flex w-1/4 items-center justify-end gap-1">
-    <button
-      class="btn btn-square hover:text-brand btn-ghost btn-sm [&_svg]:size-4"
-      aria-label={t("common.ariaLabel.search")}
-    >
-      <Search />
-    </button>
+    <div class="flex items-center justify-end gap-1 md:w-1/4">
+      <button
+        class="btn btn-square hover:text-brand btn-ghost btn-sm [&_svg]:size-4"
+        aria-label={t("common.ariaLabel.search")}
+      >
+        <Search />
+      </button>
 
-    <button
-      id="theme-toggle"
-      class="btn btn-square btn-ghost btn-sm hover:text-brand [&_svg]:size-4"
-      aria-label={t("common.ariaLabel.themeSwitcher")}
-    >
-      <span class="theme-icon-auto hidden"><SunMoon /></span>
-      <span class="theme-icon-light hidden"><Sun /></span>
-      <span class="theme-icon-dark hidden"><Moon /></span>
-    </button>
-  </div>
-</header>
+      <button
+        id="theme-toggle"
+        class="btn btn-square btn-ghost btn-sm hover:text-brand [&_svg]:size-4"
+        aria-label={t("common.ariaLabel.themeSwitcher")}
+      >
+        <span class="theme-icon-auto hidden"><SunMoon /></span>
+        <span class="theme-icon-light hidden"><Sun /></span>
+        <span class="theme-icon-dark hidden"><Moon /></span>
+      </button>
+
+      <button
+        id="menu-toggle"
+        class="btn btn-square btn-ghost btn-sm hover:text-brand md:hidden [&_svg]:size-4"
+        aria-label="Toggle Menu"
+      >
+        <span class="menu-icon-open"><Menu /></span>
+        <span class="menu-icon-close hidden"><X /></span>
+      </button>
+    </div>
+  </header>
+
+  <NavLinks
+    id="mobile-nav"
+    class="island glass absolute top-full right-0 left-0 z-50 mt-2 hidden flex-col gap-3 px-6 py-4 md:hidden"
+  />
+</div>
 
 <script>
   const toggleBtn = document.getElementById("theme-toggle")
@@ -110,4 +109,49 @@ const translatePath = useTranslatedPath(lang)
 
     updateIcons(nextTheme)
   })
+
+  // Mobile menu logic
+  const menuToggle = document.getElementById("menu-toggle")
+  const mobileNav = document.getElementById("mobile-nav")
+  const openIcon = menuToggle?.querySelector(".menu-icon-open")
+  const closeIcon = menuToggle?.querySelector(".menu-icon-close")
+
+  function closeMenu() {
+    if (mobileNav && !mobileNav.classList.contains("hidden")) {
+      mobileNav.classList.add("hidden")
+      mobileNav.classList.remove("flex")
+      openIcon?.classList.remove("hidden")
+      closeIcon?.classList.add("hidden")
+      menuToggle?.blur()
+    }
+  }
+
+  menuToggle?.addEventListener("click", () => {
+    const isOpen = mobileNav?.classList.contains("hidden")
+    if (isOpen) {
+      mobileNav?.classList.remove("hidden")
+      mobileNav?.classList.add("flex")
+      openIcon?.classList.add("hidden")
+      closeIcon?.classList.remove("hidden")
+    } else {
+      closeMenu()
+    }
+  })
+
+  // Close menu on click outside
+  document.addEventListener("click", (event) => {
+    const headerContainer = document.getElementById("header-container")
+    if (headerContainer && !headerContainer.contains(event.target as Node)) {
+      closeMenu()
+    }
+  })
+
+  // Close menu on scroll
+  window.addEventListener(
+    "scroll",
+    () => {
+      closeMenu()
+    },
+    { passive: true },
+  )
 </script>

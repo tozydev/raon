@@ -21,10 +21,10 @@ const isActive =
   data-active={isActive ? "" : undefined}
   class:list={[
     className,
-    "text-on-surface-variant hover:text-brand data-active:text-brand flex items-center gap-1.5 text-sm font-semibold transition-colors [&_svg]:size-4",
+    "text-on-surface-variant hover:text-brand data-active:text-brand flex items-center gap-1.5 text-sm font-semibold whitespace-nowrap transition-colors [&_svg]:size-4",
   ]}
   {...props}
 >
   <slot name="icon" />
-  <span class="hidden sm:inline"><slot /></span>
+  <slot />
 </a>
