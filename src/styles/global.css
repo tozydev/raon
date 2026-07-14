@@ -43,7 +43,7 @@
 
 @layer base {
   body {
-    @apply text-on-surface from-bg-start to-bg-end font-body min-h-screen scroll-smooth bg-gradient-to-b text-base font-normal antialiased;
+    @apply text-on-surface from-bg-start to-bg-end font-body min-h-screen scroll-smooth bg-linear-to-b text-base font-normal antialiased;
   }
 }
 
@@ -54,7 +54,7 @@
   }
 
   .island-interactive:hover {
-    @apply border-brand -translate-y-[2px];
+    @apply border-brand -translate-y-0.5;
     box-shadow: var(--shadow-island-hover);
   }
 
