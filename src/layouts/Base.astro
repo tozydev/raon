@@ -1,5 +1,6 @@
 ---
 import { Font } from "astro:assets"
+import BackToTopButton from "raon:components/page/BackToTopButton.astro"
 import Footer from "raon:components/page/Footer.astro"
 import Header from "raon:components/page/Header.astro"
 import { ROUTES } from "raon:consts"
@@ -67,6 +68,11 @@ const translatePath = useTranslatedPath(lang)
         <slot />
       </main>
       <Footer />
+    </div>
+    <div id="portal-zone" class="fixed">
+      <slot name="portal">
+        <BackToTopButton />
+      </slot>
     </div>
   </body>
 </html>
