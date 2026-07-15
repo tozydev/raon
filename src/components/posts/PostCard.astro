@@ -14,20 +14,17 @@ const { post } = Astro.props
   href={post.url}
   class="island island-interactive group decoration-none flex cursor-pointer flex-col items-start gap-6 p-6 md:flex-row md:items-center"
 >
-  {
-    post.data.coverImage && (
-      <div class="border-outline h-32 w-full shrink-0 overflow-hidden rounded-xl border md:w-48">
-        <Image
-          src={post.data.coverImage}
-          alt={post.data.title}
-          width={384}
-          height={256}
-          class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-102"
-        />
-      </div>
-    )
-  }
-  <div class="flex grow flex-col gap-3 text-left">
+  <div class="border-outline h-32 w-full shrink-0 overflow-hidden rounded-xl border md:w-48">
+    <Image
+      src={post.data.coverImage}
+      alt={post.data.title}
+      width={384}
+      height={256}
+      class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-102"
+    />
+  </div>
+
+  <div class="flex min-w-0 grow flex-col gap-3 text-left">
     <div class="text-on-surface-variant flex flex-wrap items-center gap-2 text-xs font-semibold">
       <FormattedDate date={post.data.publishedDate} />
       <span>•</span>
@@ -41,15 +38,96 @@ const { post } = Astro.props
     </p>
 
     {
-      post.data.tags && post.data.tags.length > 0 && (
-        <div class="mt-1 flex flex-wrap gap-1.5">
-          {post.data.tags.map((tag) => (
-            <span class="text-brand bg-brand/5 rounded-md px-2.5 py-0.5 text-[11px] font-semibold">
-              #{tag}
-            </span>
-          ))}
+      post.data.tags.length > 0 && (
+        <div class="tags-container mt-1 flex w-full items-center gap-1.5 overflow-hidden">
+          <div class="tags-list flex flex-nowrap gap-1.5 overflow-hidden">
+            {post.data.tags.map((tag) => (
+              <span class="tag-item text-brand bg-brand/5 shrink-0 rounded-md px-2.5 py-0.5 text-[11px] font-semibold">
+                #{tag}
+              </span>
+            ))}
+          </div>
+          <span class="tag-counter text-brand bg-brand/5 hidden shrink-0 rounded-md px-2.5 py-0.5 text-[11px] font-semibold" />
         </div>
       )
     }
   </div>
 </a>
+
+<script>
+  function updatePostCardTags() {
+    const containers = document.querySelectorAll(".tags-container")
+    containers.forEach((container) => {
+      const list = container.querySelector(".tags-list")
+      const counter = container.querySelector(".tag-counter")
+      const items = container.querySelectorAll(".tag-item")
+      if (!list || !counter || items.length === 0) return
+
+      // Reset all items to visible, counter to hidden
+      items.forEach((item) => item.classList.remove("hidden"))
+      counter.classList.add("hidden")
+
+      const containerWidth = container.getBoundingClientRect().width
+      if (containerWidth <= 0) return
+
+      let currentWidth = 0
+      let visibleCount = 0
+      const gap = 6 // gap-1.5 = 6px
+
+      // Find how many items fit without counter
+      for (let i = 0; i < items.length; i++) {
+        const itemWidth = items[i].getBoundingClientRect().width
+        const neededWidth = currentWidth + itemWidth + (visibleCount > 0 ? gap : 0)
+        if (neededWidth <= containerWidth) {
+          currentWidth = neededWidth
+          visibleCount++
+        } else {
+          break
+        }
+      }
+
+      if (visibleCount < items.length) {
+        // We have overflow. Show counter and set placeholder to measure its size.
+        counter.classList.remove("hidden")
+        counter.textContent = `+${items.length - visibleCount}`
+        const counterWidth = counter.getBoundingClientRect().width
+
+        // Recalculate how many items fit with the counter
+        let fitCount = 0
+        let fitWidth = 0
+        for (let i = 0; i < items.length; i++) {
+          const itemWidth = items[i].getBoundingClientRect().width
+          const neededWidth = fitWidth + itemWidth + (fitCount > 0 ? gap : 0) + gap + counterWidth
+          if (neededWidth <= containerWidth) {
+            fitWidth = fitWidth + itemWidth + (fitCount > 0 ? gap : 0)
+            fitCount++
+          } else {
+            break
+          }
+        }
+
+        const remaining = items.length - fitCount
+        if (remaining > 0) {
+          counter.textContent = `+${remaining}`
+          counter.classList.remove("hidden")
+          items.forEach((item, index) => {
+            if (index >= fitCount) {
+              item.classList.add("hidden")
+            } else {
+              item.classList.remove("hidden")
+            }
+          })
+        } else {
+          counter.classList.add("hidden")
+          items.forEach((item) => item.classList.remove("hidden"))
+        }
+      }
+    })
+  }
+
+  // Run on events
+  window.addEventListener("resize", updatePostCardTags)
+  window.addEventListener("DOMContentLoaded", updatePostCardTags)
+  window.addEventListener("load", updatePostCardTags)
+  document.addEventListener("astro:page-load", updatePostCardTags)
+</script>
