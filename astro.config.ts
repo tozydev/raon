@@ -40,8 +40,8 @@ export default defineConfig({
   fonts: [
     {
       provider: fontProviders.fontsource(),
-      name: "Nunito",
-      cssVariable: "--font-nunito",
+      name: "Quicksand",
+      cssVariable: "--font-quicksand",
       fallbacks: ["sans-serif"],
       weights: [700],
       styles: ["normal"],

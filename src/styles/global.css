@@ -19,7 +19,7 @@
 }
 
 @theme inline {
-  --font-heading: var(--font-nunito);
+  --font-heading: var(--font-quicksand);
   --font-body: var(--font-be-vietnam-pro);
   --font-sans: var(--font-body);
   --font-mono: var(--font-jetbrains-mono);
