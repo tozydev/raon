@@ -57,17 +57,15 @@ const recommendations = [...otherPosts]
 <Base title={post.data.title} description={post.data.description} image={post.data.coverImage}>
   <div class="flex flex-col gap-6">
     <article class="island overflow-hidden">
-      {
-        post.data.coverImage && (
-          <div class="border-outline h-64 w-full overflow-hidden border-b sm:h-96">
-            <Image
-              src={post.data.coverImage}
-              alt={post.data.title}
-              class="h-full w-full object-cover"
-            />
-          </div>
-        )
-      }
+      <div class="border-outline h-64 w-full overflow-hidden border-b sm:h-96">
+        <Image
+          src={post.data.coverImage}
+          alt={post.data.title}
+          fetchpriority="high"
+          loading="eager"
+          class="h-full w-full object-cover"
+        />
+      </div>
 
       <div class="flex flex-col gap-6 p-6 sm:p-10">
         <header class="flex flex-col gap-6">
@@ -94,7 +92,7 @@ const recommendations = [...otherPosts]
         </section>
 
         {
-          post.data.tags && post.data.tags.length > 0 && (
+          post.data.tags.length > 0 && (
             <footer class="border-outline mt-4 flex flex-wrap gap-2 border-t pt-6">
               {post.data.tags.map((tag) => (
                 <span class="text-brand bg-brand/5 border-brand/10 rounded-lg border px-3 py-1 text-xs font-semibold">

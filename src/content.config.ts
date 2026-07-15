@@ -23,7 +23,7 @@ const posts = defineCollection({
       author: z.string().default(PROFILE.username),
       publishedDate: z.coerce.date(),
       updatedDate: z.coerce.date().optional(),
-      coverImage: z.optional(image()),
+      coverImage: image(),
       tags: z.array(z.string()).default([]),
     }),
 })
