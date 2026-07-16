@@ -9,7 +9,7 @@ const t = useTranslations(lang)
 const translatePath = useTranslatedPath(lang)
 ---
 
-<div id="header-container" class="sticky top-4 z-50 w-full">
+<div id="header-container" class="sticky top-4 z-50 w-full transition-transform duration-300">
   <header class="island glass flex w-full items-center justify-between px-6 py-4">
     <div class="font-heading flex items-center md:w-1/4">
       <a
@@ -146,11 +146,33 @@ const translatePath = useTranslatedPath(lang)
     }
   })
 
-  // Close menu on scroll
+  // Hide header on scroll down / Show on scroll up
+  let lastScrollY = window.scrollY
+  const headerContainer = document.getElementById("header-container")
+  const scrollThreshold = 10 // minimum scroll delta required to trigger hide/show
+  const topThreshold = 350 // do not hide header near the top of the page
+
   window.addEventListener(
     "scroll",
     () => {
+      const currentScrollY = window.scrollY
+      const diffY = currentScrollY - lastScrollY
+
       closeMenu()
+
+      if (headerContainer) {
+        if (currentScrollY <= topThreshold) {
+          headerContainer.classList.remove("-translate-y-24")
+        } else if (Math.abs(diffY) > scrollThreshold) {
+          if (diffY > 0) {
+            headerContainer.classList.add("-translate-y-24")
+          } else {
+            headerContainer.classList.remove("-translate-y-24")
+          }
+        }
+      }
+
+      lastScrollY = currentScrollY
     },
     { passive: true },
   )
