@@ -42,12 +42,10 @@ const { post } = Astro.props
         <div class="tags-container mt-1 flex w-full items-center gap-1.5 overflow-hidden">
           <div class="tags-list flex flex-nowrap gap-1.5 overflow-hidden">
             {post.data.tags.map((tag) => (
-              <span class="tag-item text-brand bg-brand/5 shrink-0 rounded-md px-2.5 py-0.5 text-[11px] font-semibold">
-                #{tag}
-              </span>
+              <span class="badge badge-soft badge-sm tag-item shrink-0">#{tag}</span>
             ))}
           </div>
-          <span class="tag-counter text-brand bg-brand/5 hidden shrink-0 rounded-md px-2.5 py-0.5 text-[11px] font-semibold" />
+          <span class="badge badge-soft badge-sm tag-counter hidden shrink-0" />
         </div>
       )
     }

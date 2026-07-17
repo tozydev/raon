@@ -138,3 +138,49 @@
     width: var(--size);
   }
 }
+
+@layer components {
+  .badge {
+    --badge-bg: var(--color-surface);
+    --badge-fg: var(--color-on-surface);
+    --badge-color: var(--color-outline);
+    --size: calc(var(--spacing, 0.25rem) * 6);
+
+    @apply inline-flex w-fit items-center justify-center gap-2 rounded-lg border align-middle text-sm;
+
+    height: var(--size);
+    padding-inline: calc(var(--size) / 2 - 1px);
+    background-color: var(--badge-bg);
+    border-color: var(--badge-color);
+    color: var(--badge-fg);
+  }
+
+  .badge-soft {
+    --badge-fg: var(--color-on-surface-variant);
+    background-color: var(--color-surface-variant);
+    border-color: var(--color-outline);
+  }
+
+  .badge-surface-variant {
+    --badge-bg: var(--color-surface-variant);
+    --badge-color: var(--color-outline);
+    --badge-fg: var(--color-on-surface-variant);
+  }
+
+  .badge-ghost {
+    --badge-bg: var(--color-surface-variant);
+    --badge-color: transparent;
+    --badge-fg: var(--color-on-surface-variant);
+    border-color: transparent;
+  }
+
+  .badge-sm {
+    --size: calc(var(--spacing, 0.25rem) * 5);
+    @apply text-xs;
+  }
+
+  .badge-lg {
+    --size: calc(var(--spacing, 0.25rem) * 7);
+    @apply text-base;
+  }
+}
