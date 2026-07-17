@@ -20,11 +20,7 @@ const description = project.data.description[lang] || project.data.description[d
   {
     project.data.coverImage && (
       <div class="border-outline h-48 w-full overflow-hidden border-b">
-        <Image
-          src={project.data.coverImage}
-          alt={title}
-          class="h-full w-full object-cover transition-transform duration-500 hover:scale-102"
-        />
+        <Image src={project.data.coverImage} alt={title} class="h-full w-full object-cover" />
       </div>
     )
   }
