@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@plugin "@tailwindcss/typography";
+
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
@@ -64,12 +66,6 @@
 
   .link-variant {
     @apply text-on-surface-variant;
-  }
-}
-
-@layer utilities {
-  .glass {
-    @apply bg-surface/70 border-outline/80 backdrop-blur-lg;
   }
 }
 
@@ -182,5 +178,49 @@
   .badge-lg {
     --size: calc(var(--spacing, 0.25rem) * 7);
     @apply text-base;
+  }
+}
+
+@layer utilities {
+  .glass {
+    @apply bg-surface/70 border-outline/80 backdrop-blur-lg;
+  }
+
+  .prose-raon {
+    --tw-prose-body: var(--color-on-surface);
+    --tw-prose-headings: var(--color-on-surface);
+    --tw-prose-lead: var(--color-on-surface-variant);
+    --tw-prose-links: var(--color-brand);
+    --tw-prose-bold: var(--color-on-surface);
+
+    --tw-prose-counters: var(--color-accent);
+    --tw-prose-bullets: var(--color-accent);
+
+    --tw-prose-hr: var(--color-outline);
+
+    --tw-prose-quotes: var(--color-on-surface-variant);
+    --tw-prose-quote-borders: var(--color-brand);
+
+    --tw-prose-captions: var(--color-on-surface-variant);
+
+    --tw-prose-kbd: var(--color-on-surface);
+
+    --tw-prose-code: var(--color-on-surface);
+    /*--tw-prose-pre-code: var(--color-on-surface-variant);*/
+    /*--tw-prose-pre-bg: var(--color-surface-variant);*/
+
+    --tw-prose-th-borders: var(--color-outline);
+    --tw-prose-td-borders: var(--color-outline);
+
+    @apply prose-headings:font-heading prose-headings:font-bold;
+
+    :where(code):not(pre > code) {
+      @apply bg-surface-variant border-outline/10 rounded border px-[0.5em] py-[0.2em] font-semibold;
+
+      &:before,
+      &:after {
+        content: none;
+      }
+    }
   }
 }
