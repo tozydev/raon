@@ -2,12 +2,22 @@
 import { Image } from "astro:assets"
 import type { Post } from "raon:content"
 import FormattedDate from "../FormattedDate.astro"
+import { render } from "astro:content"
+import { useTranslations } from "raon:i18n"
 
 interface Props {
   post: Post
 }
 
 const { post } = Astro.props
+const { remarkPluginFrontmatter } = await render(post)
+
+const t = useTranslations(post.lang)
+
+const readTimeStr = t("pages.posts.readTime").replace(
+  "{minutes}",
+  remarkPluginFrontmatter.minutesRead,
+)
 ---
 
 <a
@@ -28,7 +38,7 @@ const { post } = Astro.props
     <div class="text-on-surface-variant flex flex-wrap items-center gap-2 text-xs font-semibold">
       <FormattedDate date={post.data.publishedDate} />
       <span>•</span>
-      <span>5 min read</span>
+      <span>{readTimeStr}</span>
     </div>
     <h3 class="text-on-surface group-hover:text-brand text-xl font-bold transition-colors">
       {post.data.title}

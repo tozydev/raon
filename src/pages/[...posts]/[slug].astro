@@ -23,21 +23,14 @@ export interface Props {
 }
 
 const { post } = Astro.props
-const { Content } = await render(post)
+const { Content, remarkPluginFrontmatter } = await render(post)
 
 const t = useTranslations(post.lang)
 
-// Simple read time calculation helper
-// todo use plugin
-const getReadTime = (body: string | undefined): string => {
-  if (!body) return t("pages.posts.readTime").replace("{minutes}", "1")
-  const wordsPerMinute = 200
-  const words = body.trim().split(/\s+/).length
-  const minutes = Math.ceil(words / wordsPerMinute)
-  return t("pages.posts.readTime").replace("{minutes}", String(minutes))
-}
-
-const readTimeStr = getReadTime(post.body)
+const readTimeStr = t("pages.posts.readTime").replace(
+  "{minutes}",
+  remarkPluginFrontmatter.minutesRead,
+)
 
 // Get 3 post recommendations sorted by tag similarity
 const allPosts = await getPosts({ lang: post.lang })

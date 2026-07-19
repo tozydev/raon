@@ -1,7 +1,9 @@
+import { unified } from "@astrojs/markdown-remark"
 import mdx from "@astrojs/mdx"
 import sitemap from "@astrojs/sitemap"
 import tailwindcss from "@tailwindcss/vite"
 import { defineConfig, fontProviders } from "astro/config"
+import { remarkReadingTime } from "./plugins"
 
 // https://astro.build/config
 export default defineConfig({
@@ -65,4 +67,9 @@ export default defineConfig({
       subsets: ["latin", "latin-ext", "vietnamese"],
     },
   ],
+  markdown: {
+    processor: unified({
+      remarkPlugins: [remarkReadingTime],
+    }),
+  },
 })
