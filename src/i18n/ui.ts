@@ -112,6 +112,7 @@ export const ui = {
       rss: {
         title: "RSS",
         description: "Danh sách bài viết của tozydev",
+        copyright: `© ${new Date().getFullYear()} tozydev`,
       },
       notFound: {
         title: "Trang không tồn tại",
