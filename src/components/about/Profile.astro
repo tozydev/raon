@@ -1,8 +1,12 @@
 ---
+import { Image } from "astro:assets"
+import aboutCover from "raon:assets/about-cover.png"
+import avatar from "raon:assets/avatar.png"
 import { PROFILE } from "raon:consts"
-import { defaultLang, getLangFromUrl } from "raon:i18n"
+import { defaultLang, getLangFromUrl, useTranslations } from "raon:i18n"
 
 const lang = getLangFromUrl(Astro.url)
+const t = useTranslations(lang)
 
 const Story = await import(`./story.${lang}.md`)
   .catch(() => import(`./story.${defaultLang}.md`))
@@ -11,9 +15,15 @@ const Story = await import(`./story.${lang}.md`)
 
 <section class="island flex flex-col overflow-hidden">
   <div class="relative z-10 h-48 w-full overflow-hidden sm:h-64">
-    <img
-      src="/images/about_cover.jpg"
-      alt="Scenic green field cover"
+    <Image
+      src={aboutCover}
+      loading="eager"
+      layout="full-width"
+      width={820}
+      height={256}
+      quality={100}
+      widths={[960, 683, 480, 320]}
+      alt=""
       class="h-full w-full object-cover"
     />
     <div
@@ -25,9 +35,13 @@ const Story = await import(`./story.${lang}.md`)
   <div
     class="border-surface bg-surface absolute top-36 left-1/2 z-20 h-24 w-24 -translate-x-1/2 overflow-hidden rounded-full border-4 shadow-md sm:top-48 sm:h-32 sm:w-32"
   >
-    <img
-      src="/images/about_avatar.jpg"
-      alt={`${PROFILE.name} Avatar`}
+    <Image
+      src={avatar}
+      loading="eager"
+      layout="fixed"
+      width={128}
+      height={128}
+      alt={t("pages.about.profile.avatarAlt")}
       class="h-full w-full object-cover"
     />
   </div>

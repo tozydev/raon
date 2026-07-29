@@ -29,6 +29,10 @@ const projects = await getProjects({ featured: true })
   </div>
 
   <div class="grid grid-cols-1 gap-6">
-    {projects.map((project) => <ProjectCard project={project} />)}
+    {
+      projects.map((project, index) => (
+        <ProjectCard project={project} imageLoading={index === 0 ? "eager" : "lazy"} />
+      ))
+    }
   </div>
 </section>

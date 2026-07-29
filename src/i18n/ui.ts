@@ -62,6 +62,9 @@ export const ui = {
       about: {
         title: "Giới thiệu",
         description: "Giới thiệu về Thanh Tân (Raon) - Software Developer",
+        profile: {
+          avatarAlt: "Ảnh đại diện của tozydev",
+        },
         skills: {
           title: "Kỹ năng & Công nghệ",
         },

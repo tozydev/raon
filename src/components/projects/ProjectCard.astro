@@ -7,9 +7,10 @@ import { defaultLang, getLangFromUrl } from "raon:i18n"
 
 interface Props {
   project: Project
+  imageLoading?: "eager" | "lazy"
 }
 
-const { project } = Astro.props
+const { project, imageLoading = "lazy" } = Astro.props
 const lang = getLangFromUrl(Astro.url)
 
 const title = project.data.title[lang] || project.data.title[defaultLang]
@@ -20,7 +21,16 @@ const description = project.data.description[lang] || project.data.description[d
   {
     project.data.coverImage && (
       <div class="border-outline h-48 w-full overflow-hidden border-b">
-        <Image src={project.data.coverImage} alt={title} class="h-full w-full object-cover" />
+        <Image
+          src={project.data.coverImage}
+          loading={imageLoading}
+          height={192}
+          widths={[960, 683, 480, 320]}
+          quality={95}
+          layout="constrained"
+          alt=""
+          class="h-full w-full object-cover"
+        />
       </div>
     )
   }

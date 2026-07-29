@@ -28,8 +28,8 @@ const posts = await getPosts({ lang })
     {
       posts.length > 0 ? (
         <div class="grid grid-cols-1 gap-6">
-          {posts.map((post) => (
-            <PostCard post={post} />
+          {posts.map((post, index) => (
+            <PostCard post={post} imageLoading={index <= 5 ? "eager" : "lazy"} />
           ))}
         </div>
       ) : (
