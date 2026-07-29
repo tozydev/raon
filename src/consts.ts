@@ -1,4 +1,14 @@
-import { Book, Code, Cpu, Rocket, Terminal, type AstroComponent } from "@lucide/astro"
+import {
+  Code,
+  Goal,
+  Key,
+  MonitorCog,
+  PcCase,
+  Rocket,
+  University,
+  UserSearch,
+  type AstroComponent,
+} from "@lucide/astro"
 import type { Language } from "raon:i18n"
 
 export const ROUTES = {
@@ -26,64 +36,81 @@ export const PROFILE = {
     bluesky: "https://bsky.app/profile/tozydev.id.vn",
   },
   skills: [
-    "React",
+    "Kotlin",
+    "Java",
     "TypeScript",
-    "JavaScript",
-    "Node.js",
-    "Bun",
-    "TanStack Start",
-    "TanStack Router",
-    "Tailwind CSS v4",
-    "CSS Grid/Flexbox",
-    "Rust",
-    "Tauri",
-    "Go",
+    "Spring Boot",
+    "Ktor",
+    "Compose Multiplatform",
+    "PostgreSQL",
     "SQLite",
-    "WebAssembly",
     "Git",
-    "Docker",
-    "REST APIs",
-    "UI/UX Design",
+    "IntelliJ IDEA",
+    "AI",
   ],
 }
 
 export const JOURNEYS = [
   {
-    period: "2023",
+    period: "2016",
     text: {
-      vi: "Bắt đầu học ngôn ngữ lập trình đầu tiên và khám phá thế giới thuật toán qua Java. Đây là năm tôi viết những dòng code đầu tiên, làm quen với cú pháp cơ bản và rèn luyện tư duy logic.",
-      en: "Started learning my first programming language and exploring the world of algorithms through Java. This is the year I wrote my first lines of code, familiarized myself with basic syntax, and honed my logical thinking.",
+      vi: "Tôi biết đến lập trình và có cho mình chiếc PC đầu tiên.",
+      en: "I know programming and have my first PC.",
     },
-    icon: Book,
+    icon: PcCase,
   },
   {
-    period: "2024",
+    period: "2017",
     text: {
-      vi: "Chính thức bước chân vào giảng đường Khoa học Máy tính. Tôi bắt đầu xây dựng các ứng dụng web thực tế đầu tiên sử dụng React, học cách tối ưu giao diện và quản lý luồng dữ liệu.",
-      en: "Officially stepped into the Computer Science classroom. I started building my first real-world web applications using React, learning how to optimize interfaces and manage data flow.",
+      vi: "Tôi đã cài Windows, Hackintosh, Ubuntu vào chiếc PC của mình.",
+      en: "I installed Windows, Hackintosh, Ubuntu on my first PC.",
+    },
+    icon: MonitorCog,
+  },
+  {
+    period: "2018",
+    text: {
+      vi: "Nhờ Minecraft, tôi bắt đầu yêu thích việc lập trình. Tôi học Java và bắt đầu viết các plugin đầu tiên cho server Minecraft. Nhưng, tôi không thích Kotlin.",
+      en: "I started programming thanks to Minecraft. I learned Java and started writing the first Minecraft plugins. But I don't like Kotlin.",
     },
     icon: Code,
   },
   {
-    period: "2025",
+    period: "2021",
     text: {
-      vi: "Tập trung chuyên sâu vào kiến trúc Backend và thiết kế hệ thống tối ưu. Đây cũng là thời điểm tôi bắt đầu viết blog kỹ thuật để chia sẻ những gì mình học được tới cộng đồng lập trình viên.",
-      en: "Focusing deeply on Backend architecture and optimal system design. This is also the time I started writing technical blogs to share what I learned with the developer community.",
+      vi: "Why? Kotlin đã trở thành ngôn ngữ yêu thích của tôi. Tôi bắt đầu chuyển các dự án của mình sang Kotlin và đã không quay lại.",
+      en: "Why? Kotlin has become my favorite language. I started converting my projects to Kotlin and haven't looked back.",
     },
-    icon: Terminal,
+    icon: Key,
+  },
+  {
+    period: "2023",
+    text: {
+      vi: "Tôi quyết định theo đuổi con đường lập trình chuyên nghiệp. Nhưng vẫn chưa xác định được mình sẽ đảm nhận vai trò gì.",
+      en: "I decided to pursue a professional programming path. But I haven't yet determined what role I will take on.",
+    },
+    icon: University,
+  },
+  {
+    period: "2024",
+    text: {
+      vi: "Software Developer, tập trung vào web backend. Let's go! Khoảng thời gian này tôi cũng nhận làm các job freelance về plugin Minecraft",
+      en: "Software Developer, focusing on web backend. Let's go! This is also where I receive freelance jobs for Minecraft plugins.",
+    },
+    icon: UserSearch,
   },
   {
     text: {
-      vi: "Đang dồn toàn bộ tâm huyết để thiết kế và phát triển các sản phẩm cá nhân tối giản, mượt mà bằng việc kết hợp Kotlin, Spring Boot và React.",
-      en: "Currently dedicating all my efforts to designing and developing sleek, minimalist personal products by combining Kotlin, Spring Boot, and React.",
+      vi: "Tôi đã dừng việc phát triển plugin Minecraft. Tập trung hoàn toàn vào con đường trở thành Software Developer chuyên nghiệp. Tôi bắt đầu hứng thú với việc phát triển các sản phẩm mã nguồn mở.",
+      en: "I stopped developing Minecraft plugins. I focused completely on the path to becoming a professional Software Developer. I started to enjoy developing open-source products.",
     },
-    icon: Cpu,
+    icon: Goal,
     isCurrent: true,
   },
   {
     text: {
-      vi: "Hướng tới việc đóng góp tích cực cho các dự án mã nguồn mở lớn và ra mắt thêm nhiều công cụ hỗ trợ để tối ưu hiệu suất làm việc cho các lập trình viên khác.",
-      en: "Looking forward to actively contributing to major open-source projects and launching more tools to optimize workflow for other developers.",
+      vi: "Hướng tới việc đóng góp các dự án mã nguồn mở, đặc biệt trong hệ sinh thái Kotlin. Và tạo ra các sản phẩm chất lượng phục vụ các khách hàng của mình.",
+      en: "I am heading towards contributing to open-source projects, especially in the Kotlin ecosystem. And creating quality products to serve my customers.",
     },
     icon: Rocket,
     isFuture: true,

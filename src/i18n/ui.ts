@@ -53,7 +53,7 @@ export const ui = {
         introduction:
           "Tôi là một Software Developer. \
             Tôi thích xây dựng các ứng dụng bằng Kotlin. \
-            Tôi cũng thích học hỏi các công nghệ mới và chia sẻ kiến thức của mình với cộng đồng.",
+            Tôi cũng thích học hỏi các công nghệ mới và chia sẻ câu chuyện của mình với mọi người.",
       },
       featuredProjects: {
         title: "Dự án nổi bật",
@@ -77,9 +77,8 @@ export const ui = {
       },
       contact: {
         title: "Liên hệ",
-        subtitle: "Cùng nhau xây dựng",
         description:
-          "Dù bạn có một công việc hợp đồng thú vị, cần tư vấn về kiến trúc React hiệu năng cao, hay chỉ muốn trò chuyện trao đổi—đừng ngần ngại liên hệ nhé.",
+          "Tôi luôn sẵn sàng trò chuyện, trao đổi, hợp tác với bạn — đừng ngần ngại liên hệ nhé.",
         send: "Gửi Email",
       },
     },
