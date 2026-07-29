@@ -27,11 +27,11 @@ export const ui = {
         projects: "Dự án",
         about: "Giới thiệu",
       },
-      buttons: {
-        moreAbout: "Tìm hiểu thêm",
+      actions: {
+        learnAbout: "Tìm hiểu thêm",
         viewMore: "Xem thêm",
       },
-      ariaLabel: {
+      aria: {
         search: "Tìm kiếm",
         themeSwitcher: "Chuyển đổi giao diện",
         rss: "RSS Feed",
@@ -41,69 +41,73 @@ export const ui = {
         copyright: `© ${new Date().getFullYear()} tozydev. Xây dựng bằng Astro.`,
       },
     },
+    components: {
+      hero: {
+        greeting: "Hi! Tôi là",
+        introduction:
+          "Tôi là một Software Developer. \
+            Tôi thích xây dựng các ứng dụng bằng Kotlin. \
+            Tôi cũng thích học hỏi các công nghệ mới và chia sẻ kiến thức của mình với cộng đồng.",
+      },
+      featuredProjects: {
+        title: "Dự án nổi bật",
+      },
+      recentPosts: {
+        title: "Bài viết gần đây",
+      },
+      postRecommendations: {
+        title: "Có thể bạn quan tâm",
+      },
+      profile: {
+        avatarAlt: "Ảnh đại diện của tozydev",
+      },
+      skills: {
+        title: "Kỹ năng & Công nghệ",
+      },
+      journey: {
+        title: "Hành trình",
+        present: "Hiện tại",
+        upcoming: "Tiếp theo",
+      },
+      contact: {
+        title: "Liên hệ",
+        subtitle: "Cùng nhau xây dựng",
+        description:
+          "Dù bạn có một công việc hợp đồng thú vị, cần tư vấn về kiến trúc React hiệu năng cao, hay chỉ muốn trò chuyện trao đổi—đừng ngần ngại liên hệ nhé.",
+        send: "Gửi Email",
+      },
+    },
     pages: {
       home: {
         title: "Trang chủ",
-        description: "",
-        hero: {
-          gretting: "Hi! Tôi là",
-          introduction:
-            "Tôi là một Software Developer. \
-            Tôi thích xây dựng các ứng dụng bằng Kotlin. \
-            Tôi cũng thích học hỏi các công nghệ mới và chia sẻ kiến thức của mình với cộng đồng.",
-        },
-        featuredProjects: {
-          title: "Dự án nổi bật",
-        },
-        recentPosts: {
-          title: "Bài viết gần đây",
-        },
+        description: "Trang chủ website cá nhân của Thanh Tân (tozydev)",
       },
       about: {
         title: "Giới thiệu",
-        description: "Giới thiệu về Thanh Tân (Raon) - Software Developer",
-        profile: {
-          avatarAlt: "Ảnh đại diện của tozydev",
-        },
-        skills: {
-          title: "Kỹ năng & Công nghệ",
-        },
-        journey: {
-          title: "Hành trình",
-          current: "Hiện tại",
-          future: "Tiếp theo",
-        },
-        contact: {
-          title: "Liên hệ",
-          subtitle: "Cùng nhau xây dựng",
-          description:
-            "Dù bạn có một công việc hợp đồng thú vị, cần tư vấn về kiến trúc React hiệu năng cao, hay chỉ muốn trò chuyện trao đổi—đừng ngần ngại liên hệ nhé.",
-          send: "Gửi Email",
-        },
+        description: "Đôi dòng về bản thân, hành trình và những gì tôi làm.",
       },
       projects: {
         title: "Dự án",
-        description: "",
-        allProjects: {
+        description: "Danh sách các dự án của tozydev",
+        empty: "Chưa có dự án nào.",
+        list: {
           title: "Tất cả dự án",
-          empty: "Chưa có dự án nào.",
         },
       },
       posts: {
         title: "Bài viết",
-        description: "",
+        description: "Danh sách các bài viết của tozydev",
         readTime: "{minutes} phút đọc",
-        allPosts: {
+        empty: "Chưa có bài viết nào.",
+        list: {
           title: "Tất cả bài viết",
-          empty: "Chưa có bài viết nào.",
         },
-        recommendationsTitle: "Có thể bạn quan tâm",
       },
       rss: {
         title: "RSS",
-        description: "",
+        description: "Danh sách bài viết của tozydev",
       },
-      404: {
+      notFound: {
         title: "Không tìm thấy trang",
         description: "Trang bạn đang tìm kiếm không tồn tại.",
       },

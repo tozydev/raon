@@ -16,14 +16,14 @@ const posts = await getPosts({ lang, limit: 3 })
   <div class="flex w-full items-center justify-between">
     <div class="flex items-center gap-2">
       <h2 class="text-on-surface font-heading text-2xl font-bold">
-        {t("pages.home.recentPosts.title")}
+        {t("components.recentPosts.title")}
       </h2>
     </div>
     <a
       href={translatePath(ROUTES.posts)}
       class="text-brand hover:text-on-surface flex cursor-pointer items-center gap-1 text-sm font-semibold transition-colors"
     >
-      {t("common.buttons.viewMore")}
+      {t("common.actions.viewMore")}
       <ArrowRight class="size-4" />
     </a>
   </div>

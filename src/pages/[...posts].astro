@@ -21,7 +21,7 @@ const posts = await getPosts({ lang })
   <section class="flex flex-col gap-6">
     <div class="flex items-center gap-2 text-left">
       <h1 class="text-on-surface font-heading text-2xl font-bold">
-        {t("pages.posts.allPosts.title")}
+        {t("pages.posts.list.title")}
       </h1>
     </div>
 
@@ -34,7 +34,7 @@ const posts = await getPosts({ lang })
         </div>
       ) : (
         <div class="island flex flex-col items-center justify-center gap-4 p-12 text-center">
-          <p class="text-on-surface-variant">{t("pages.posts.allPosts.empty")}</p>
+          <p class="text-on-surface-variant">{t("pages.posts.empty")}</p>
         </div>
       )
     }

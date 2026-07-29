@@ -13,18 +13,18 @@ const translatePath = useTranslatedPath(lang)
   <h1
     class="text-on-surface font-heading text-3xl leading-tight font-bold tracking-tight sm:text-4xl"
   >
-    {t("pages.home.hero.gretting")}
+    {t("components.hero.greeting")}
     <br />
     <span class="text-brand text-4xl sm:text-6xl">{PROFILE.name}</span>.
   </h1>
 
   <p class="text-on-surface-variant max-w-2xl text-lg leading-relaxed">
-    {t("pages.home.hero.introduction")}
+    {t("components.hero.introduction")}
   </p>
 
   <div class="mt-2 flex flex-wrap items-center gap-4">
     <a href={translatePath(ROUTES.about)} class="btn btn-brand">
-      {t("common.buttons.moreAbout")}
+      {t("common.actions.learnAbout")}
       <ArrowRightIcon class="size-5" />
     </a>
     <a href={PROFILE.socials.github} target="_blank" class="btn btn-outline">
