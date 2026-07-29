@@ -58,122 +58,126 @@ const translatePath = useTranslatedPath(lang)
 </div>
 
 <script>
-  const toggleBtn = document.getElementById("theme-toggle")
-  const autoIcon = toggleBtn?.querySelector(".theme-icon-auto")
-  const lightIcon = toggleBtn?.querySelector(".theme-icon-light")
-  const darkIcon = toggleBtn?.querySelector(".theme-icon-dark")
+  function setupHeader() {
+    const toggleBtn = document.getElementById("theme-toggle")
+    const autoIcon = toggleBtn?.querySelector(".theme-icon-auto")
+    const lightIcon = toggleBtn?.querySelector(".theme-icon-light")
+    const darkIcon = toggleBtn?.querySelector(".theme-icon-dark")
 
-  function updateIcons(theme: string) {
-    switch (theme) {
-      case "dark":
-        autoIcon?.classList.add("hidden")
-        lightIcon?.classList.add("hidden")
-        darkIcon?.classList.remove("hidden")
-        break
-      case "light":
-        autoIcon?.classList.add("hidden")
-        lightIcon?.classList.remove("hidden")
-        darkIcon?.classList.add("hidden")
-        break
-      default:
-        autoIcon?.classList.remove("hidden")
-        lightIcon?.classList.add("hidden")
-        darkIcon?.classList.add("hidden")
-        break
+    function updateIcons(theme: string) {
+      switch (theme) {
+        case "dark":
+          autoIcon?.classList.add("hidden")
+          lightIcon?.classList.add("hidden")
+          darkIcon?.classList.remove("hidden")
+          break
+        case "light":
+          autoIcon?.classList.add("hidden")
+          lightIcon?.classList.remove("hidden")
+          darkIcon?.classList.add("hidden")
+          break
+        default:
+          autoIcon?.classList.remove("hidden")
+          lightIcon?.classList.add("hidden")
+          darkIcon?.classList.add("hidden")
+          break
+      }
     }
-  }
 
-  function setTheme(theme: string) {
-    document.documentElement.classList.remove("light", "dark")
-    if (theme === "auto") {
-      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches
-      document.documentElement.classList.add(prefersDark ? "dark" : "light")
-      document.documentElement.removeAttribute("data-theme")
-      document.documentElement.style.colorScheme = prefersDark ? "dark" : "light"
-    } else {
-      document.documentElement.classList.add(theme)
-      document.documentElement.setAttribute("data-theme", theme)
-      document.documentElement.style.colorScheme = theme
+    function setTheme(theme: string) {
+      document.documentElement.classList.remove("light", "dark")
+      if (theme === "auto") {
+        const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches
+        document.documentElement.classList.add(prefersDark ? "dark" : "light")
+        document.documentElement.removeAttribute("data-theme")
+        document.documentElement.style.colorScheme = prefersDark ? "dark" : "light"
+      } else {
+        document.documentElement.classList.add(theme)
+        document.documentElement.setAttribute("data-theme", theme)
+        document.documentElement.style.colorScheme = theme
+      }
     }
-  }
 
-  var stored = window.localStorage.getItem("theme")
-  var currentTheme = stored === "light" || stored === "dark" || stored === "auto" ? stored : "auto"
-  updateIcons(currentTheme)
+    var stored = window.localStorage.getItem("theme")
+    var currentTheme = stored === "light" || stored === "dark" || stored === "auto" ? stored : "auto"
+    updateIcons(currentTheme)
 
-  toggleBtn?.addEventListener("click", () => {
-    const nextTheme = currentTheme === "light" ? "dark" : currentTheme === "dark" ? "auto" : "light"
-    currentTheme = nextTheme
-    localStorage.setItem("theme", nextTheme)
-    setTheme(nextTheme)
+    toggleBtn?.addEventListener("click", () => {
+      const nextTheme = currentTheme === "light" ? "dark" : currentTheme === "dark" ? "auto" : "light"
+      currentTheme = nextTheme
+      localStorage.setItem("theme", nextTheme)
+      setTheme(nextTheme)
 
-    updateIcons(nextTheme)
-  })
+      updateIcons(nextTheme)
+    })
 
-  // Mobile menu logic
-  const menuToggle = document.getElementById("menu-toggle")
-  const mobileNav = document.getElementById("mobile-nav")
-  const openIcon = menuToggle?.querySelector(".menu-icon-open")
-  const closeIcon = menuToggle?.querySelector(".menu-icon-close")
+    // Mobile menu logic
+    const menuToggle = document.getElementById("menu-toggle")
+    const mobileNav = document.getElementById("mobile-nav")
+    const openIcon = menuToggle?.querySelector(".menu-icon-open")
+    const closeIcon = menuToggle?.querySelector(".menu-icon-close")
 
-  function closeMenu() {
-    if (mobileNav && !mobileNav.classList.contains("hidden")) {
-      mobileNav.classList.add("hidden")
-      mobileNav.classList.remove("flex")
-      openIcon?.classList.remove("hidden")
-      closeIcon?.classList.add("hidden")
-      menuToggle?.blur()
+    function closeMenu() {
+      if (mobileNav && !mobileNav.classList.contains("hidden")) {
+        mobileNav.classList.add("hidden")
+        mobileNav.classList.remove("flex")
+        openIcon?.classList.remove("hidden")
+        closeIcon?.classList.add("hidden")
+        menuToggle?.blur()
+      }
     }
-  }
 
-  menuToggle?.addEventListener("click", () => {
-    const isOpen = mobileNav?.classList.contains("hidden")
-    if (isOpen) {
-      mobileNav?.classList.remove("hidden")
-      mobileNav?.classList.add("flex")
-      openIcon?.classList.add("hidden")
-      closeIcon?.classList.remove("hidden")
-    } else {
-      closeMenu()
-    }
-  })
+    menuToggle?.addEventListener("click", () => {
+      const isOpen = mobileNav?.classList.contains("hidden")
+      if (isOpen) {
+        mobileNav?.classList.remove("hidden")
+        mobileNav?.classList.add("flex")
+        openIcon?.classList.add("hidden")
+        closeIcon?.classList.remove("hidden")
+      } else {
+        closeMenu()
+      }
+    })
 
-  // Close menu on click outside
-  document.addEventListener("click", (event) => {
+    // Close menu on click outside
+    document.addEventListener("click", (event) => {
+      const headerContainer = document.getElementById("header-container")
+      if (headerContainer && !headerContainer.contains(event.target as Node)) {
+        closeMenu()
+      }
+    })
+
+    // Hide header on scroll down / Show on scroll up
+    let lastScrollY = window.scrollY
     const headerContainer = document.getElementById("header-container")
-    if (headerContainer && !headerContainer.contains(event.target as Node)) {
-      closeMenu()
-    }
-  })
+    const scrollThreshold = 10 // minimum scroll delta required to trigger hide/show
+    const topThreshold = 350 // do not hide header near the top of the page
 
-  // Hide header on scroll down / Show on scroll up
-  let lastScrollY = window.scrollY
-  const headerContainer = document.getElementById("header-container")
-  const scrollThreshold = 10 // minimum scroll delta required to trigger hide/show
-  const topThreshold = 350 // do not hide header near the top of the page
+    window.addEventListener(
+      "scroll",
+      () => {
+        const currentScrollY = window.scrollY
+        const diffY = currentScrollY - lastScrollY
 
-  window.addEventListener(
-    "scroll",
-    () => {
-      const currentScrollY = window.scrollY
-      const diffY = currentScrollY - lastScrollY
+        closeMenu()
 
-      closeMenu()
-
-      if (headerContainer) {
-        if (currentScrollY <= topThreshold) {
-          headerContainer.classList.remove("-translate-y-24")
-        } else if (Math.abs(diffY) > scrollThreshold) {
-          if (diffY > 0) {
-            headerContainer.classList.add("-translate-y-24")
-          } else {
+        if (headerContainer) {
+          if (currentScrollY <= topThreshold) {
             headerContainer.classList.remove("-translate-y-24")
+          } else if (Math.abs(diffY) > scrollThreshold) {
+            if (diffY > 0) {
+              headerContainer.classList.add("-translate-y-24")
+            } else {
+              headerContainer.classList.remove("-translate-y-24")
+            }
           }
         }
-      }
 
-      lastScrollY = currentScrollY
-    },
-    { passive: true },
-  )
+        lastScrollY = currentScrollY
+      },
+      { passive: true },
+    )
+  }
+
+  document.addEventListener("astro:page-load", setupHeader)
 </script>

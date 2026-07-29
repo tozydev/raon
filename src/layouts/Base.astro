@@ -1,5 +1,6 @@
 ---
 import { Font } from "astro:assets"
+import { ClientRouter } from "astro:transitions"
 import BackToTopButton from "raon:components/page/BackToTopButton.astro"
 import Footer from "raon:components/page/Footer.astro"
 import Header from "raon:components/page/Header.astro"
@@ -62,11 +63,13 @@ const translatePath = useTranslatedPath(lang)
     <Font cssVariable="--font-quicksand" preload />
     <Font cssVariable="--font-be-vietnam-pro" preload />
     <Font cssVariable="--font-jetbrains-mono" />
+
+    <ClientRouter />
   </head>
   <body>
     <div class="mx-auto flex min-h-screen w-full max-w-205 grow flex-col gap-8 px-4 py-8">
       <Header />
-      <main class="flex grow flex-col gap-16">
+      <main class="flex grow flex-col gap-16" transition:animate="fade">
         <slot />
       </main>
       <Footer />
@@ -76,5 +79,14 @@ const translatePath = useTranslatedPath(lang)
         <BackToTopButton />
       </slot>
     </div>
+
+    <script>
+      document.addEventListener("astro:after-swap", () => {
+        window.scrollTo({
+          top: 0,
+          behavior: "smooth",
+        })
+      })
+    </script>
   </body>
 </html>
