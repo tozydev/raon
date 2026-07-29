@@ -3,7 +3,7 @@ import { ExternalLink } from "@lucide/astro"
 import { Image } from "astro:assets"
 import GitHub from "raon:assets/github.svg"
 import type { Project } from "raon:content"
-import { defaultLang, getLangFromUrl } from "raon:i18n"
+import { defaultLang, getLangFromUrl, useTranslations } from "raon:i18n"
 
 interface Props {
   project: Project
@@ -12,6 +12,7 @@ interface Props {
 
 const { project, imageLoading = "lazy" } = Astro.props
 const lang = getLangFromUrl(Astro.url)
+const t = useTranslations(lang)
 
 const title = project.data.title[lang] || project.data.title[defaultLang]
 const description = project.data.description[lang] || project.data.description[defaultLang]
@@ -47,7 +48,7 @@ const description = project.data.description[lang] || project.data.description[d
                 href={project.data.github}
                 target="_blank"
                 class="link link-variant"
-                aria-label="GitHub Repository"
+                aria-label={t("common.aria.githubRepo")}
               >
                 <GitHub class="size-5" />
               </a>
@@ -59,7 +60,7 @@ const description = project.data.description[lang] || project.data.description[d
                 href={project.data.link}
                 target="_blank"
                 class="link link-variant"
-                aria-label="Live Demo"
+                aria-label={t("common.aria.liveDemo")}
               >
                 <ExternalLink class="size-5" />
               </a>

@@ -34,6 +34,10 @@ export const ui = {
       aria: {
         search: "Tìm kiếm",
         themeSwitcher: "Chuyển đổi giao diện",
+        toggleMenu: "Chuyển đổi menu",
+        backToTop: "Về đầu trang",
+        githubRepo: "Mã nguồn GitHub",
+        liveDemo: "Bản thử nghiệm",
         rss: "RSS Feed",
         email: "Email",
       },
