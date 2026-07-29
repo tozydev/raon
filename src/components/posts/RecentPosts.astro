@@ -12,9 +12,9 @@ const translatePath = useTranslatedPath(lang)
 const posts = await getPosts({ lang, limit: 3 })
 ---
 
-<section class="flex flex-col gap-6">
-  <div class="flex w-full items-center justify-between">
-    <div class="flex items-center gap-2">
+<section class="flex flex-col gap-4">
+  <div class="flex w-full items-center justify-between px-2">
+    <div class="flex items-center">
       <h2 class="text-on-surface font-heading text-2xl font-bold">
         {t("components.recentPosts.title")}
       </h2>
