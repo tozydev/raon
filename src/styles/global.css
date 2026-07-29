@@ -90,7 +90,7 @@
     --btn-border: transparent;
     --btn-hover: color-mix(in srgb, var(--color-surface-variant) 90%, var(--color-on-surface));
 
-    @apply inline-flex cursor-pointer items-center justify-center gap-1.5 rounded-lg border text-base font-semibold transition-all duration-200 ease-in-out select-none;
+    @apply inline-flex cursor-pointer items-center justify-center gap-1.5 rounded-lg border text-base font-semibold text-nowrap transition-all duration-200 ease-in-out select-none;
 
     height: var(--size);
     padding-inline: var(--btn-px);
