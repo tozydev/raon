@@ -1,5 +1,6 @@
 ---
 import type { GetStaticPaths } from "astro"
+import NotFound from "raon:components/page/NotFound.astro"
 import { getLangPaths, useTranslations, type HasLang } from "raon:i18n"
 import Base from "raon:layouts/Base.astro"
 
@@ -14,5 +15,5 @@ const t = useTranslations(lang)
 ---
 
 <Base title={t("pages.notFound.title")} description={t("pages.notFound.description")}>
-  <h1>404</h1>
+  <NotFound />
 </Base>

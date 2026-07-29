@@ -30,6 +30,8 @@ export const ui = {
       actions: {
         learnAbout: "Tìm hiểu thêm",
         viewMore: "Xem thêm",
+        goHome: "Về trang chủ",
+        goBack: "Quay lại",
       },
       aria: {
         search: "Tìm kiếm",
@@ -112,8 +114,10 @@ export const ui = {
         description: "Danh sách bài viết của tozydev",
       },
       notFound: {
-        title: "Không tìm thấy trang",
-        description: "Trang bạn đang tìm kiếm không tồn tại.",
+        title: "Trang không tồn tại",
+        description: "Trang bạn đang tìm kiếm không tồn tại hoặc đã được di chuyển.",
+        heading: "Úps! Trang này không tồn tại",
+        message: "Đường dẫn bạn truy cập có thể bị hỏng hoặc đã được di chuyển.",
       },
     },
   },
