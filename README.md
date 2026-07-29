@@ -1,63 +1,113 @@
-# Astro Starter Kit: Blog
+# 🐲 Raon — Personal Website
 
-```sh
-bun create astro@latest -- --template blog
-```
+![GitHub License](https://img.shields.io/github/license/tozydev/raon)
+[![Website](https://img.shields.io/badge/tozydev.id.vn-2f6b46)](https://tozydev.id.vn)
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+This is my personal website, built with Astro v7, TypeScript, Tailwind CSS v4, and MDX. It serves as a portfolio and a blog where I share my thoughts on programming, technology, and other topics of interest.
 
-Features:
+## ✨ Key Features
 
-- ✅ Minimal styling (make it your own!)
-- ✅ 100/100 Lighthouse performance
-- ✅ SEO-friendly with canonical URLs and Open Graph data
-- ✅ Sitemap support
-- ✅ RSS Feed support
-- ✅ Markdown & MDX support
+- 🌲 **Custom Island Design System**: Nature-inspired with minimalism, and modern interface aesthetics
+- 🌐 **Multilingual (i18n)**: Native bilingual support for Vietnamese (`vi`, default) and English (`en`).
+- 🌙 **Dual-Theme Support**: Light, Dark, and System Auto.
+- ⚡ **High Performance & SEO**: Astro v7 static build, canonical URLs, Open Graph metadata, JSON-LD structured data, XML Sitemap, and RSS feeds.
+- 📝 **Type-Safe Content**: Markdown & MDX blog posts powered by Astro Content Collections.
 
-## 🚀 Project Structure
+## 🛠️ Tech Stack
 
-Inside of your Astro project, you'll see the following folders and files:
+- **Framework**: [Astro v7](https://astro.build/)
+- **Language**: [TypeScript](https://www.typescriptlang.org/)
+- **Styling**: [Tailwind CSS v4](https://tailwindcss.com/)
+- **Icons**: [Lucide Icons](https://lucide.dev/)
+- **Content**: MDX & Markdown with custom Remark/Rehype plugins
+- **Package Manager**: [Bun](https://bun.sh/)
+- **Deployment**: [Cloudflare Workers / Pages](https://developers.cloudflare.com/workers/)
+
+## 📂 Project Structure
 
 ```text
-├── public/
+├── content/              # Blog posts and content assets
+├── plugins/              # Custom remark & rehype plugins
+├── public/               # Static assets & favicons
 ├── src/
-│   ├── assets/
-│   ├── components/
-│   ├── content/
-│   ├── layouts/
-│   └── pages/
-├── astro.config.mjs
-├── README.md
-├── package.json
-└── tsconfig.json
+│   ├── assets/           # Source media & static images
+│   ├── components/       # UI components (page, home, posts, projects, about)
+│   ├── content/          # Content collection configurations
+│   ├── i18n/             # Dictionaries and translation helpers
+│   ├── layouts/          # Base HTML layout (Base.astro)
+│   ├── pages/            # Astro route pages
+│   ├── scripts/          # Client-side scripts (theme loader, etc.)
+│   ├── styles/           # Theme tokens and global CSS (global.css)
+│   ├── consts.ts         # Site constants, profile info, and navigation
+│   └── content.config.ts # Content collection schema definitions
+├── AGENTS.md             # Developer & AI Agent guidance
+├── DESIGN.md             # Design system specifications & theme tokens
+├── astro.config.ts       # Astro configuration
+├── package.json          # Dependencies and scripts
+└── wrangler.jsonc        # Cloudflare deployment config
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+## 🚀 Getting Started
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+### Prerequisites
 
-The `src/content/` directory contains "collections" of related Markdown and MDX documents. Use `getCollection()` to retrieve posts from `src/content/blog/`, and type-check your frontmatter using an optional schema. See [Astro's Content Collections docs](https://docs.astro.build/en/guides/content-collections/) to learn more.
+- [Bun](https://bun.sh/) (v1.0+)
+- [Node.js](https://nodejs.org/) (>= 22.12.0)
 
-Any static assets, like images, can be placed in the `public/` directory.
+### Installation & Development
 
-## 🧞 Commands
+1. **Clone the repository**:
 
-All commands are run from the root of the project, from a terminal:
+   ```bash
+   git clone https://github.com/tozydev/raon.git
+   cd raon
+   ```
 
-| Command               | Action                                           |
-| :-------------------- | :----------------------------------------------- |
-| `bun install`         | Installs dependencies                            |
-| `bun dev`             | Starts local dev server at `localhost:4321`      |
-| `bun build`           | Build your production site to `./dist/`          |
-| `bun preview`         | Preview your build locally, before deploying     |
-| `bun astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `bun astro -- --help` | Get help using the Astro CLI                     |
+2. **Install dependencies**:
 
-## 👀 Want to learn more?
+   ```bash
+   bun install
+   ```
 
-Check out [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+3. **Start local dev server**:
+   ```bash
+   bun run dev
+   ```
+   The site will be available at `http://localhost:4321`.
 
-## Credit
+### Available Commands
 
-This theme is based off of the lovely [Bear Blog](https://github.com/HermanMartinus/bearblog/).
+| Command             | Action                                                                   |
+| :------------------ | :----------------------------------------------------------------------- |
+| `bun run dev`       | Starts local development server at `http://localhost:4321`               |
+| `bun run build`     | Runs Astro check (`typecheck`) and builds production bundle to `./dist/` |
+| `bun run preview`   | Previews the production build locally                                    |
+| `bun run fmt`       | Formats codebase using Prettier                                          |
+| `bun run fmt:check` | Validates code formatting with Prettier without writing                  |
+
+## 📚 Documentation & References
+
+- [DESIGN.md](DESIGN.md): Detailed documentation of theme color tokens, typography system, component tokens, and layout guidelines.
+- [AGENTS.md](AGENTS.md): Developer & AI Agent conventions, architecture guidance, and repository rules.
+
+## 📄 License
+
+This repository is licensed under two licenses:
+
+- The source code is licensed under the Apache License 2.0. See the [LICENSE](LICENSE) file for details.
+- The blog content is licensed under the Creative Commons Attribution Share Alike 4.0 International License.
+  See the [content/LICENSE](content/LICENSE) file for details.
+
+## 🎁 Acknowledgements
+
+I would like to thank the following: projects, libraries, tools, and resources that made this project possible:
+
+- [Astro](https://astro.build/) – For powering the static site generation.
+- [Tailwind CSS](https://tailwindcss.com/) – For the utility-first CSS framework styling this site.
+- [Lucide](https://lucide.dev/) – For the icon used in this site.
+- [MDX](https://mdxjs.com/) – For the MDX support.
+- [Cloudflare Workers](https://workers.cloudflare.com/) – For hosting the static site.
+- [Quicksand](https://github.com/andrew-paglinawan/QuicksandFamily), [BeVietnamePro](https://github.com/bettergui/BeVietnamPro),
+  and [JetBrains Mono](https://www.jetbrains.com/lp/mono/) – For the fonts used on the site.
+
+And all the libraries and tools that made this project possible!
