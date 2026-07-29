@@ -5,6 +5,7 @@ import RecentPosts from "raon:components/posts/RecentPosts.astro"
 import FeaturedProjects from "raon:components/projects/FeaturedProjects.astro"
 import { getLangPaths, useTranslations, type HasLang } from "raon:i18n"
 import Base from "raon:layouts/Base.astro"
+import { getHomeJsonLd } from "raon:utils/jsonld"
 
 interface Props extends HasLang {}
 
@@ -14,9 +15,20 @@ export const getStaticPaths = (() => {
 
 const { lang } = Astro.props
 const t = useTranslations(lang)
+
+const siteUrl = (Astro.site || Astro.url.origin).toString().replace(/\/$/, "")
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site).toString()
+
+const jsonLd = getHomeJsonLd({
+  siteUrl,
+  canonicalUrl,
+  title: t("pages.home.title"),
+  description: t("pages.home.description"),
+  lang,
+})
 ---
 
-<Base title={t("pages.home.title")} description={t("pages.home.description")}>
+<Base title={t("pages.home.title")} description={t("pages.home.description")} jsonLd={jsonLd}>
   <Hero />
   <FeaturedProjects />
   <RecentPosts />

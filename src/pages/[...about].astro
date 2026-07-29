@@ -6,6 +6,7 @@ import Profile from "raon:components/about/Profile.astro"
 import Skills from "raon:components/about/Skills.astro"
 import { getLangPaths, useTranslations, type HasLang } from "raon:i18n"
 import Base from "raon:layouts/Base.astro"
+import { getAboutJsonLd } from "raon:utils/jsonld"
 
 interface Props extends HasLang {}
 
@@ -15,9 +16,20 @@ export const getStaticPaths = (() => {
 
 const { lang } = Astro.props
 const t = useTranslations(lang)
+
+const siteUrl = (Astro.site || Astro.url.origin).toString().replace(/\/$/, "")
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site).toString()
+
+const jsonLd = getAboutJsonLd({
+  siteUrl,
+  canonicalUrl,
+  title: t("pages.about.title"),
+  description: t("pages.about.description"),
+  lang,
+})
 ---
 
-<Base title={t("pages.about.title")} description={t("pages.about.description")}>
+<Base title={t("pages.about.title")} description={t("pages.about.description")} jsonLd={jsonLd}>
   <Profile />
   <Skills />
   <Journey />

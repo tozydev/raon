@@ -9,6 +9,7 @@ import { ROUTES } from "raon:consts"
 import { getPosts, type Post } from "raon:content"
 import { useTranslatedPath, useTranslations } from "raon:i18n"
 import Base from "raon:layouts/Base.astro"
+import { getPostDetailJsonLd } from "raon:utils/jsonld"
 
 export const getStaticPaths = (async () => {
   return (await getPosts()).map((post) => {
@@ -32,9 +33,23 @@ const readTimeStr = t("pages.posts.readTime").replace(
   "{minutes}",
   remarkPluginFrontmatter.minutesRead,
 )
+
+const siteUrl = (Astro.site || Astro.url.origin).toString().replace(/\/$/, "")
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site).toString()
+
+const jsonLd = getPostDetailJsonLd({
+  siteUrl,
+  canonicalUrl,
+  post,
+})
 ---
 
-<Base title={post.data.title} description={post.data.description} image={post.data.coverImage}>
+<Base
+  title={post.data.title}
+  description={post.data.description}
+  image={post.data.coverImage}
+  jsonLd={jsonLd}
+>
   <div class="flex flex-col gap-6">
     <article class="island overflow-hidden">
       <div class="border-outline h-64 w-full overflow-hidden border-b sm:h-96">

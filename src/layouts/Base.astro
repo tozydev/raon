@@ -4,22 +4,35 @@ import { ClientRouter } from "astro:transitions"
 import BackToTopButton from "raon:components/page/BackToTopButton.astro"
 import Footer from "raon:components/page/Footer.astro"
 import Header from "raon:components/page/Header.astro"
-import { ROUTES } from "raon:consts"
+import { PROFILE, ROUTES } from "raon:consts"
 import { getLangFromUrl, useTranslatedPath, useTranslations } from "raon:i18n"
+import { getDefaultJsonLd } from "raon:utils/jsonld"
 import "../styles/global.css"
 
 interface Props {
   title: string
   description: string
   image?: ImageMetadata
+  jsonLd?: Record<string, any>
 }
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site)
 
-const { title, description } = Astro.props
+const { title, description, jsonLd } = Astro.props
 const lang = getLangFromUrl(Astro.url)
 const t = useTranslations(lang)
 const translatePath = useTranslatedPath(lang)
+
+const siteUrl = (Astro.site || Astro.url.origin).toString().replace(/\/$/, "")
+const jsonLdData =
+  jsonLd ||
+  getDefaultJsonLd({
+    siteUrl,
+    canonicalUrl: canonicalURL.toString(),
+    title,
+    description,
+    lang,
+  })
 ---
 
 <!doctype html>
@@ -40,12 +53,13 @@ const translatePath = useTranslatedPath(lang)
       href={new URL(translatePath(ROUTES.rss), Astro.site)}
     />
     <meta name="generator" content={Astro.generator} />
+    <!-- <link rel="alternate" hreflang={lang} href={canonicalURL} /> -->
 
     <!-- Canonical URL -->
     <link rel="canonical" href={canonicalURL} />
 
     <!-- Primary Meta Tags -->
-    <title>{title}</title>
+    <title>{title} | {PROFILE.username}</title>
     <meta name="description" content={description} />
 
     <!-- Open Graph / Facebook -->
@@ -57,6 +71,12 @@ const translatePath = useTranslatedPath(lang)
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <!-- <meta name="twitter:image" content={new URL(image.src, Astro.url)} /> -->
+
+    <!-- Structured Data (JSON-LD) -->
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLdData)} />
 
     <script src="raon:scripts/load-theme.ts"></script>
 

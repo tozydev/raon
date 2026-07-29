@@ -99,11 +99,13 @@ const translatePath = useTranslatedPath(lang)
     }
 
     var stored = window.localStorage.getItem("theme")
-    var currentTheme = stored === "light" || stored === "dark" || stored === "auto" ? stored : "auto"
+    var currentTheme =
+      stored === "light" || stored === "dark" || stored === "auto" ? stored : "auto"
     updateIcons(currentTheme)
 
     toggleBtn?.addEventListener("click", () => {
-      const nextTheme = currentTheme === "light" ? "dark" : currentTheme === "dark" ? "auto" : "light"
+      const nextTheme =
+        currentTheme === "light" ? "dark" : currentTheme === "dark" ? "auto" : "light"
       currentTheme = nextTheme
       localStorage.setItem("theme", nextTheme)
       setTheme(nextTheme)

@@ -4,6 +4,7 @@ import ProjectCard from "raon:components/projects/ProjectCard.astro"
 import { getProjects } from "raon:content"
 import { getLangPaths, useTranslations, type HasLang } from "raon:i18n"
 import Base from "raon:layouts/Base.astro"
+import { getProjectsJsonLd } from "raon:utils/jsonld"
 
 interface Props extends HasLang {}
 
@@ -15,9 +16,25 @@ const { lang } = Astro.props
 const t = useTranslations(lang)
 
 const projects = await getProjects()
+
+const siteUrl = (Astro.site || Astro.url.origin).toString().replace(/\/$/, "")
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site).toString()
+
+const jsonLd = getProjectsJsonLd({
+  siteUrl,
+  canonicalUrl,
+  title: t("pages.projects.title"),
+  description: t("pages.projects.description"),
+  lang,
+  projects,
+})
 ---
 
-<Base title={t("pages.projects.title")} description={t("pages.projects.description")}>
+<Base
+  title={t("pages.projects.title")}
+  description={t("pages.projects.description")}
+  jsonLd={jsonLd}
+>
   <section class="flex flex-col gap-6">
     <div class="flex items-center gap-2">
       <h2 class="text-on-surface font-heading text-2xl font-bold">
