@@ -1,0 +1,72 @@
+---
+import { Heart } from "@lucide/astro"
+import { Image } from "astro:assets"
+import FormattedDate from "raon:components/FormattedDate.astro"
+import { getPosts, type Post } from "raon:content"
+import { useTranslations } from "raon:i18n"
+
+export interface Props {
+  post: Post
+}
+
+const { post } = Astro.props
+
+// Get 3 post recommendations sorted by tag similarity
+const allPosts = await getPosts({ lang: post.lang })
+const currentSlug = post.slug
+const currentTags = post.data.tags || []
+const otherPosts = allPosts.filter((p) => p.slug !== currentSlug)
+
+const recommendations = [...otherPosts]
+  .sort((a, b) => {
+    const aMatches = a.data.tags?.filter((t) => currentTags.includes(t)).length || 0
+    const bMatches = b.data.tags?.filter((t) => currentTags.includes(t)).length || 0
+    return bMatches - aMatches
+  })
+  .slice(0, 3)
+
+const t = useTranslations(post.lang)
+---
+
+{
+  recommendations.length > 0 && (
+    <section class="mt-6 flex flex-col gap-6">
+      <div class="flex items-center gap-2">
+        <Heart class="text-brand size-5" />
+        <h3 class="text-on-surface font-heading text-2xl font-bold">
+          {t("pages.posts.recommendationsTitle")}
+        </h3>
+      </div>
+
+      <div class="grid grid-cols-1 gap-6 sm:grid-cols-3">
+        {recommendations.map((rec) => (
+          <a
+            href={rec.url}
+            class="island island-interactive group decoration-none flex flex-col overflow-hidden"
+          >
+            {rec.data.coverImage && (
+              <div class="border-outline h-32 w-full overflow-hidden border-b">
+                <Image
+                  src={rec.data.coverImage}
+                  height={128}
+                  widths={[256, 512]}
+                  layout="constrained"
+                  alt=""
+                  class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-102"
+                />
+              </div>
+            )}
+            <div class="flex grow flex-col justify-between gap-2 p-4">
+              <h4 class="text-on-surface group-hover:text-brand line-clamp-2 text-sm leading-snug font-bold transition-colors">
+                {rec.data.title}
+              </h4>
+              <div class="text-on-surface-variant text-[10px] font-semibold">
+                <FormattedDate date={rec.data.publishedDate} />
+              </div>
+            </div>
+          </a>
+        ))}
+      </div>
+    </section>
+  )
+}
