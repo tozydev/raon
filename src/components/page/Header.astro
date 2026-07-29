@@ -1,5 +1,5 @@
 ---
-import { Search, Sun, Moon, SunMoon, Menu, X } from "@lucide/astro"
+import { Sun, Moon, SunMoon, Menu, X } from "@lucide/astro"
 import { getLangFromUrl, useTranslatedPath, useTranslations } from "raon:i18n"
 import NavLinks from "./NavLinks.astro"
 import { ROUTES } from "raon:consts"
@@ -23,12 +23,12 @@ const translatePath = useTranslatedPath(lang)
     <NavLinks class="hidden grow items-center justify-center gap-4 md:flex" />
 
     <div class="flex items-center justify-end gap-1 md:w-1/4">
-      <button
+      <!-- <button
         class="btn btn-square hover:text-brand btn-ghost btn-sm [&_svg]:size-4"
         aria-label={t("common.aria.search")}
       >
         <Search />
-      </button>
+      </button> -->
 
       <button
         id="theme-toggle"
