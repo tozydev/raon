@@ -28,11 +28,17 @@ const projects = await getProjects({ featured: true })
     </a>
   </div>
 
-  <div class="grid grid-cols-1 gap-6">
-    {
-      projects.map((project, index) => (
-        <ProjectCard project={project} imageLoading={index === 0 ? "eager" : "lazy"} />
-      ))
-    }
-  </div>
+  {
+    projects.length > 0 ? (
+      <div class="grid grid-cols-1 gap-6">
+        {projects.map((project, index) => (
+          <ProjectCard project={project} imageLoading={index === 0 ? "eager" : "lazy"} />
+        ))}
+      </div>
+    ) : (
+      <div class="island flex flex-col items-center justify-center gap-4 p-12 text-center">
+        <p class="text-on-surface-variant">{t("pages.projects.empty")}</p>
+      </div>
+    )
+  }
 </section>
