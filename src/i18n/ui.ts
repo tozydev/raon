@@ -109,7 +109,7 @@ export const ui = {
         },
       },
       rss: {
-        title: "RSS",
+        title: "tozydev Blog",
         description: "Danh sách bài viết của tozydev",
         copyright: `© ${new Date().getFullYear()} tozydev`,
       },
@@ -123,5 +123,105 @@ export const ui = {
   },
   en: {
     name: "English",
+    common: {
+      nav: {
+        home: "Home",
+        posts: "Posts",
+        projects: "Projects",
+        about: "About",
+      },
+      actions: {
+        learnAbout: "Learn more",
+        viewMore: "View more",
+        goHome: "Go home",
+        goBack: "Go back",
+      },
+      aria: {
+        search: "Search",
+        themeSwitcher: "Switch theme",
+        toggleMenu: "Toggle menu",
+        backToTop: "Back to top",
+        githubRepo: "GitHub repository",
+        liveDemo: "Live demo",
+        rss: "RSS Feed",
+        email: "Email",
+      },
+      footer: {
+        copyright: `© ${new Date().getFullYear()} tozydev. Built with Astro.`,
+      },
+    },
+    components: {
+      hero: {
+        greeting: "Hi! I'm",
+        introduction:
+          "I'm a Software Developer. \
+            I enjoy building applications with Kotlin. \
+            I also enjoy learning new technologies and sharing my stories with others.",
+      },
+      featuredProjects: {
+        title: "Featured Projects",
+      },
+      recentPosts: {
+        title: "Recent Posts",
+      },
+      postRecommendations: {
+        title: "You May Also Like",
+      },
+      profile: {
+        avatarAlt: "tozydev's profile picture",
+      },
+      skills: {
+        title: "Skills & Technologies",
+      },
+      journey: {
+        title: "Journey",
+        present: "Present",
+        upcoming: "Up Next",
+      },
+      contact: {
+        title: "Contact",
+        description:
+          "I'm always open to conversations, ideas, and collaborations — feel free to reach out.",
+        send: "Send Email",
+      },
+    },
+    pages: {
+      home: {
+        title: "Home",
+        description: "The personal website of Thanh Tan (tozydev)",
+      },
+      about: {
+        title: "About",
+        description: "A little about me, my journey, and what I do.",
+      },
+      projects: {
+        title: "Projects",
+        description: "A list of tozydev's projects",
+        empty: "No projects yet.",
+        list: {
+          title: "All Projects",
+        },
+      },
+      posts: {
+        title: "Posts",
+        description: "A list of tozydev's posts",
+        readTime: "{minutes} min read",
+        empty: "No posts yet.",
+        list: {
+          title: "All Posts",
+        },
+      },
+      rss: {
+        title: "The tozydev Blog",
+        description: "A list of tozydev's posts",
+        copyright: `© ${new Date().getFullYear()} tozydev`,
+      },
+      notFound: {
+        title: "Page Not Found",
+        description: "The page you're looking for doesn't exist or has been moved.",
+        heading: "Oops! This page doesn't exist",
+        message: "The link you followed may be broken or the page may have been moved.",
+      },
+    },
   },
 } as const satisfies Record<Language, TranslationMap>
