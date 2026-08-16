@@ -91,17 +91,24 @@ const translatePath = useTranslatedPath(lang)
     }
 
     function setTheme(theme: string) {
-      document.documentElement.classList.remove("light", "dark")
+      const root = document.documentElement
+      root.classList.add("theme-switching")
+      void root.offsetWidth
+
+      root.classList.remove("light", "dark")
       if (theme === "auto") {
         const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches
-        document.documentElement.classList.add(prefersDark ? "dark" : "light")
-        document.documentElement.removeAttribute("data-theme")
-        document.documentElement.style.colorScheme = prefersDark ? "dark" : "light"
+        root.classList.add(prefersDark ? "dark" : "light")
+        root.removeAttribute("data-theme")
+        root.style.colorScheme = prefersDark ? "dark" : "light"
       } else {
-        document.documentElement.classList.add(theme)
-        document.documentElement.setAttribute("data-theme", theme)
-        document.documentElement.style.colorScheme = theme
+        root.classList.add(theme)
+        root.setAttribute("data-theme", theme)
+        root.style.colorScheme = theme
       }
+
+      void root.offsetWidth
+      root.classList.remove("theme-switching")
     }
 
     var stored = window.localStorage.getItem("theme")

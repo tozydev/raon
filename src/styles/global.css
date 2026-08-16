@@ -61,6 +61,11 @@
   }
 }
 
+html.theme-switching * {
+  transition-property:
+    transform, translate, scale, rotate, opacity, filter, backdrop-filter, visibility !important;
+}
+
 @keyframes page-in {
   from {
     opacity: 0;
