@@ -57,7 +57,55 @@
 
 @layer base {
   body {
-    @apply text-on-surface from-bg-start to-bg-end font-body min-h-screen scroll-smooth bg-linear-to-b text-base font-normal antialiased;
+    @apply text-on-surface from-bg-start to-bg-end font-body min-h-screen bg-linear-to-b text-base font-normal antialiased;
+  }
+}
+
+@keyframes page-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes page-out {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes page-in-back {
+  from {
+    opacity: 0;
+    transform: translateY(-16px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes page-out-back {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateY(8px);
   }
 }
 

@@ -1,6 +1,7 @@
 ---
 import { Font } from "astro:assets"
 import { ClientRouter } from "astro:transitions"
+import type { TransitionDirectionalAnimations } from "astro"
 import BackToTopButton from "raon:components/page/BackToTopButton.astro"
 import Footer from "raon:components/page/Footer.astro"
 import Header from "raon:components/page/Header.astro"
@@ -33,6 +34,17 @@ const jsonLdData =
     description,
     lang,
   })
+
+const slideFade: TransitionDirectionalAnimations = {
+  forwards: {
+    old: { name: "page-out", duration: "0.18s", easing: "ease-out", fillMode: "forwards" },
+    new: { name: "page-in", duration: "0.3s", easing: "ease-out", fillMode: "backwards" },
+  },
+  backwards: {
+    old: { name: "page-out-back", duration: "0.18s", easing: "ease-out", fillMode: "forwards" },
+    new: { name: "page-in-back", duration: "0.3s", easing: "ease-out", fillMode: "backwards" },
+  },
+}
 ---
 
 <!doctype html>
@@ -89,7 +101,7 @@ const jsonLdData =
   <body>
     <div class="mx-auto flex min-h-screen w-full max-w-205 grow flex-col gap-4 px-4 pt-4 pb-8">
       <Header />
-      <main class="flex grow flex-col gap-8" transition:animate="fade">
+      <main class="flex grow flex-col gap-8" transition:animate={slideFade}>
         <slot />
       </main>
       <Footer />
@@ -99,14 +111,5 @@ const jsonLdData =
         <BackToTopButton />
       </slot>
     </div>
-
-    <script>
-      document.addEventListener("astro:after-swap", () => {
-        window.scrollTo({
-          top: 0,
-          behavior: "smooth",
-        })
-      })
-    </script>
   </body>
 </html>

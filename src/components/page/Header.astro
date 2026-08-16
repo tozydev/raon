@@ -9,7 +9,13 @@ const t = useTranslations(lang)
 const translatePath = useTranslatedPath(lang)
 ---
 
-<div id="header-container" class="sticky top-4 z-50 w-full transition-transform duration-300">
+<div
+  id="header-container"
+  data-lang={lang}
+  transition:persist
+  transition:name="site-header"
+  class="sticky top-4 z-50 w-full transition-transform duration-300"
+>
   <header class="island glass flex w-full items-center justify-between px-6 py-4">
     <div class="font-heading flex items-center md:w-1/4">
       <a
@@ -181,5 +187,38 @@ const translatePath = useTranslatedPath(lang)
     )
   }
 
-  document.addEventListener("astro:page-load", setupHeader)
+  const headerSetups = new WeakSet<HTMLElement>()
+
+  function refreshActiveLinks() {
+    const base = import.meta.env.BASE_URL
+    const pathname = location.pathname.replace(base, "").replace(/\/$/, "")
+    const segments = pathname.split("/").filter(Boolean)
+    const hasLocale = segments.length > 0 && (segments[0] === "vi" || segments[0] === "en")
+    const candidates = [
+      pathname,
+      `/${segments[0] || ""}${hasLocale ? `/${segments[1] || ""}` : ""}`,
+    ]
+
+    document.querySelectorAll<HTMLAnchorElement>("a[data-nav-link]").forEach((link) => {
+      const href = link.getAttribute("href") ?? ""
+      link.toggleAttribute("data-active", candidates.includes(href))
+    })
+  }
+
+  document.addEventListener("astro:page-load", () => {
+    const headerContainer = document.getElementById("header-container")
+    if (!headerContainer) return
+
+    if (headerContainer.dataset.lang !== document.documentElement.lang) {
+      window.location.reload()
+      return
+    }
+
+    if (!headerSetups.has(headerContainer)) {
+      headerSetups.add(headerContainer)
+      setupHeader()
+    }
+
+    refreshActiveLinks()
+  })
 </script>
