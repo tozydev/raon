@@ -38,21 +38,21 @@ const translatePath = useTranslatedPath(lang)
 
       <button
         id="theme-toggle"
-        class="btn btn-square btn-ghost btn-sm hover:text-brand [&_svg]:size-4"
+        class="btn btn-square btn-ghost btn-sm hover:text-brand relative [&_svg]:size-4"
         aria-label={t("common.aria.themeSwitcher")}
       >
-        <span class="theme-icon-auto hidden"><SunMoon /></span>
-        <span class="theme-icon-light hidden"><Sun /></span>
-        <span class="theme-icon-dark hidden"><Moon /></span>
+        <span class="theme-icon-auto icon-swap"><SunMoon /></span>
+        <span class="theme-icon-light icon-swap"><Sun /></span>
+        <span class="theme-icon-dark icon-swap"><Moon /></span>
       </button>
 
       <button
         id="menu-toggle"
-        class="btn btn-square btn-ghost btn-sm hover:text-brand md:hidden [&_svg]:size-4"
+        class="btn btn-square btn-ghost btn-sm hover:text-brand relative md:hidden [&_svg]:size-4"
         aria-label={t("common.aria.toggleMenu")}
       >
-        <span class="menu-icon-open"><Menu /></span>
-        <span class="menu-icon-close hidden"><X /></span>
+        <span class="menu-icon-open icon-swap"><Menu /></span>
+        <span class="menu-icon-close icon-swap"><X /></span>
       </button>
     </div>
   </header>
@@ -71,23 +71,9 @@ const translatePath = useTranslatedPath(lang)
     const darkIcon = toggleBtn?.querySelector(".theme-icon-dark")
 
     function updateIcons(theme: string) {
-      switch (theme) {
-        case "dark":
-          autoIcon?.classList.add("hidden")
-          lightIcon?.classList.add("hidden")
-          darkIcon?.classList.remove("hidden")
-          break
-        case "light":
-          autoIcon?.classList.add("hidden")
-          lightIcon?.classList.remove("hidden")
-          darkIcon?.classList.add("hidden")
-          break
-        default:
-          autoIcon?.classList.remove("hidden")
-          lightIcon?.classList.add("hidden")
-          darkIcon?.classList.add("hidden")
-          break
-      }
+      autoIcon?.classList.toggle("icon-swap-show", theme === "auto")
+      lightIcon?.classList.toggle("icon-swap-show", theme === "light")
+      darkIcon?.classList.toggle("icon-swap-show", theme === "dark")
     }
 
     function setTheme(theme: string) {
@@ -136,8 +122,8 @@ const translatePath = useTranslatedPath(lang)
       if (mobileNav && !mobileNav.classList.contains("hidden")) {
         mobileNav.classList.add("hidden")
         mobileNav.classList.remove("flex")
-        openIcon?.classList.remove("hidden")
-        closeIcon?.classList.add("hidden")
+        openIcon?.classList.add("icon-swap-show")
+        closeIcon?.classList.remove("icon-swap-show")
         menuToggle?.blur()
       }
     }
@@ -147,8 +133,8 @@ const translatePath = useTranslatedPath(lang)
       if (isOpen) {
         mobileNav?.classList.remove("hidden")
         mobileNav?.classList.add("flex")
-        openIcon?.classList.add("hidden")
-        closeIcon?.classList.remove("hidden")
+        openIcon?.classList.remove("icon-swap-show")
+        closeIcon?.classList.add("icon-swap-show")
       } else {
         closeMenu()
       }

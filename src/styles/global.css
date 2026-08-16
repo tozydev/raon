@@ -114,6 +114,12 @@ html.theme-switching * {
   }
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .icon-swap {
+    transition: none;
+  }
+}
+
 @layer components {
   .island {
     @apply bg-surface border-outline relative rounded-xl border transition-all duration-300;
@@ -131,6 +137,23 @@ html.theme-switching * {
 
   .link-variant {
     @apply text-on-surface-variant;
+  }
+
+  .icon-swap {
+    @apply pointer-events-none absolute inset-0 flex items-center justify-center;
+    opacity: 0;
+    scale: 0.6;
+    rotate: -90deg;
+    transition:
+      opacity 200ms ease-out,
+      rotate 200ms ease-out,
+      scale 200ms ease-out;
+  }
+
+  .icon-swap-show {
+    opacity: 1;
+    scale: 1;
+    rotate: 0deg;
   }
 }
 
