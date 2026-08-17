@@ -271,7 +271,7 @@ html.theme-switching * {
 
 @layer utilities {
   .glass {
-    @apply bg-surface/70 border-outline/80 backdrop-blur-lg;
+    @apply bg-surface/70 border-outline/80 md:backdrop-blur-lg;
   }
 
   .prose-raon {
