@@ -118,6 +118,8 @@ const translatePath = useTranslatedPath(lang)
     const openIcon = menuToggle?.querySelector(".menu-icon-open")
     const closeIcon = menuToggle?.querySelector(".menu-icon-close")
 
+    openIcon?.classList.add("icon-swap-show")
+
     function closeMenu() {
       if (mobileNav && !mobileNav.classList.contains("hidden")) {
         mobileNav.classList.add("hidden")
