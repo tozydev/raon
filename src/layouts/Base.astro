@@ -1,115 +1,93 @@
 ---
-import { Font } from "astro:assets"
-import { ClientRouter } from "astro:transitions"
-import type { TransitionDirectionalAnimations } from "astro"
-import BackToTopButton from "raon:components/page/BackToTopButton.astro"
-import Footer from "raon:components/page/Footer.astro"
-import Header from "raon:components/page/Header.astro"
-import { PROFILE, ROUTES } from "raon:consts"
-import { getLangFromUrl, useTranslatedPath, useTranslations } from "raon:i18n"
-import { getDefaultJsonLd } from "raon:utils/jsonld"
-import "../styles/global.css"
+import { getMenuWithCacheHint, getSiteSettingsWithCacheHint } from "emdash"
+import { EmDashHead, EmDashBodyStart, EmDashBodyEnd } from "emdash/ui"
+import { createPublicPageContext } from "emdash/page"
+import LiveSearch from "emdash/ui/search"
+import { resolveStarterSiteIdentity } from "../utils/site-identity"
 
 interface Props {
   title: string
-  description: string
-  image?: ImageMetadata
-  jsonLd?: Record<string, any>
+  pageTitle?: string | null
+  description?: string | null
+  image?: string | null
+  canonical?: string | null
+  /** Pass content reference for plugin page contributions on content pages */
+  content?: { collection: string; id: string; slug?: string | null }
 }
 
-const canonicalURL = new URL(Astro.url.pathname, Astro.site)
-
-const { title, description, jsonLd } = Astro.props
-const lang = getLangFromUrl(Astro.url)
-const t = useTranslations(lang)
-const translatePath = useTranslatedPath(lang)
-
-const siteUrl = (Astro.site || Astro.url.origin).toString().replace(/\/$/, "")
-const jsonLdData =
-  jsonLd ||
-  getDefaultJsonLd({
-    siteUrl,
-    canonicalUrl: canonicalURL.toString(),
-    title,
-    description,
-    lang,
-  })
-
-const slideFade: TransitionDirectionalAnimations = {
-  forwards: {
-    old: { name: "page-out", duration: "0.18s", easing: "ease-out", fillMode: "forwards" },
-    new: { name: "page-in", duration: "0.3s", easing: "ease-out", fillMode: "backwards" },
-  },
-  backwards: {
-    old: { name: "page-out-back", duration: "0.18s", easing: "ease-out", fillMode: "forwards" },
-    new: { name: "page-in-back", duration: "0.3s", easing: "ease-out", fillMode: "backwards" },
-  },
+const locale = Astro.currentLocale ?? "vi"
+const { title, pageTitle, description, image, canonical, content } = Astro.props
+const [settingsResult, menuResult] = await Promise.all([
+  getSiteSettingsWithCacheHint(),
+  getMenuWithCacheHint("primary"),
+])
+if (Astro.cache?.enabled) {
+  Astro.cache.set(settingsResult.cacheHint)
+  Astro.cache.set(menuResult.cacheHint)
 }
+
+const { siteTitle, siteTagline, siteLogo } = resolveStarterSiteIdentity(settingsResult.data)
+const titleIncludesSiteName =
+  title === siteTitle || title.endsWith(` | ${siteTitle}`) || title.endsWith(` — ${siteTitle}`)
+const fullTitle = titleIncludesSiteName ? title : `${title} | ${siteTitle}`
+const pageDescription = description ?? siteTagline
+const menu = menuResult.data
+
+const pageCtx = createPublicPageContext({
+  Astro,
+  kind: content ? "content" : "custom",
+  pageType: "website",
+  title: fullTitle,
+  pageTitle: pageTitle ?? title,
+  description: pageDescription,
+  canonical,
+  image,
+  content,
+  siteName: siteTitle,
+})
 ---
 
 <!doctype html>
-<html lang={lang}>
+<html lang={locale}>
   <head>
-    <!-- Global Metadata -->
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <link rel="icon" type="image/svg+xml" href="/_raon/images/favicon.svg" />
-    <link rel="icon" type="image/png" sizes="96x96" href="/_raon/images/favicon-96x96.png" />
-    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
-    <link rel="apple-touch-icon" href="/_raon/images/apple-touch-icon.png" />
-    <link rel="sitemap" href="/sitemap-index.xml" />
-    <link
-      rel="alternate"
-      type="application/rss+xml"
-      title={t("pages.rss.title")}
-      href={new URL(translatePath(ROUTES.rss), Astro.site)}
-    />
-    <meta name="generator" content={Astro.generator} />
-    <!-- <link rel="alternate" hreflang={lang} href={canonicalURL} /> -->
-
-    <!-- Canonical URL -->
-    <link rel="canonical" href={canonicalURL} />
-
-    <!-- Primary Meta Tags -->
-    <title>{title} | {PROFILE.username}</title>
-    <meta name="description" content={description} />
-
-    <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content={Astro.url} />
-    <meta property="og:title" content={title} />
-    <meta property="og:description" content={description} />
-    <!-- <meta property="og:image" content={new URL(image.src, Astro.url)} /> -->
-
-    <!-- Twitter -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content={title} />
-    <meta name="twitter:description" content={description} />
-    <!-- <meta name="twitter:image" content={new URL(image.src, Astro.url)} /> -->
-
-    <!-- Structured Data (JSON-LD) -->
-    <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLdData)} />
-
-    <script src="raon:scripts/load-theme.ts"></script>
-
-    <Font cssVariable="--font-quicksand" preload />
-    <Font cssVariable="--font-be-vietnam-pro" preload />
-    <Font cssVariable="--font-jetbrains-mono" />
-
-    <ClientRouter />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{fullTitle}</title>
+    <EmDashHead page={pageCtx} />
   </head>
   <body>
-    <div class="mx-auto flex min-h-screen w-full max-w-205 grow flex-col gap-4 px-4 pt-4 pb-8">
-      <Header />
-      <main class="flex grow flex-col gap-8" transition:animate={slideFade}>
-        <slot />
-      </main>
-      <Footer />
-    </div>
-    <div id="portal-zone" class="fixed">
-      <slot name="portal">
-        <BackToTopButton />
-      </slot>
-    </div>
+    <EmDashBodyStart page={pageCtx} />
+
+    <header>
+      <nav>
+        <a href="/">
+          {siteLogo ? (
+            <img
+              src={siteLogo.url}
+              alt={siteLogo.alt || siteTitle}
+              style="height:48px;width:auto;margin:-8px 0;display:block;"
+            />
+          ) : (
+            siteTitle
+          )}
+        </a>
+        {menu?.items.map((item) => (
+          <a
+            href={item.url}
+            target={item.target}
+            rel={item.target === "_blank" ? "noopener noreferrer" : undefined}
+          >
+            {item.label}
+          </a>
+        ))}
+        <LiveSearch placeholder="Search..." collections={["posts", "pages"]} />
+      </nav>
+    </header>
+
+    <main>
+      <slot />
+    </main>
+
+    <EmDashBodyEnd page={pageCtx} />
   </body>
 </html>

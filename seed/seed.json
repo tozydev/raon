@@ -1,0 +1,224 @@
+{
+  "$schema": "https://emdashcms.com/seed.schema.json",
+  "version": "1",
+  "meta": {
+    "name": "Exported Seed",
+    "description": "Exported from existing EmDash database"
+  },
+  "settings": {
+    "dateFormat": "MMM d, yyyy",
+    "tagline": "Website cá nhân của Thanh Tân (tozydev)",
+    "timezone": "Asia/Saigon",
+    "title": "tozydev"
+  },
+  "blockTypes": [],
+  "collections": [
+    {
+      "slug": "pages",
+      "label": "Pages",
+      "labelSingular": "Page",
+      "supports": ["drafts", "revisions", "search", "preview"],
+      "fields": [
+        {
+          "slug": "title",
+          "label": "Title",
+          "type": "string",
+          "required": true,
+          "searchable": true
+        },
+        {
+          "slug": "content",
+          "label": "Content",
+          "type": "portableText",
+          "searchable": true
+        }
+      ]
+    },
+    {
+      "slug": "posts",
+      "label": "Posts",
+      "labelSingular": "Post",
+      "supports": ["drafts", "revisions", "search", "preview"],
+      "fields": [
+        {
+          "slug": "title",
+          "label": "Title",
+          "type": "string",
+          "required": true,
+          "searchable": true
+        },
+        {
+          "slug": "featured_image",
+          "label": "Featured Image",
+          "type": "image",
+          "options": {
+            "darkVariant": true
+          }
+        },
+        {
+          "slug": "content",
+          "label": "Content",
+          "type": "portableText",
+          "searchable": true
+        },
+        {
+          "slug": "excerpt",
+          "label": "Excerpt",
+          "type": "text"
+        },
+        {
+          "slug": "projects",
+          "label": "Projects",
+          "type": "reference",
+          "validation": {
+            "relation": "posts_projects",
+            "relationSide": "parent",
+            "targetCollection": "projects"
+          }
+        }
+      ]
+    },
+    {
+      "slug": "projects",
+      "label": "Projects",
+      "labelSingular": "Project",
+      "supports": ["drafts", "revisions", "preview", "search"],
+      "fields": [
+        {
+          "slug": "title",
+          "label": "Title",
+          "type": "string",
+          "required": true,
+          "searchable": true
+        },
+        {
+          "slug": "description",
+          "label": "Description",
+          "type": "text"
+        },
+        {
+          "slug": "featured_image",
+          "label": "Featured Image",
+          "type": "image",
+          "options": {
+            "darkVariant": true
+          }
+        },
+        {
+          "slug": "featured",
+          "label": "Featured",
+          "type": "boolean"
+        },
+        {
+          "slug": "link",
+          "label": "Link",
+          "type": "url"
+        },
+        {
+          "slug": "github",
+          "label": "GitHub",
+          "type": "url"
+        },
+        {
+          "slug": "content",
+          "label": "Content",
+          "type": "portableText",
+          "searchable": true
+        },
+        {
+          "slug": "posts",
+          "label": "Posts",
+          "type": "reference",
+          "validation": {
+            "relation": "posts_projects",
+            "relationSide": "child",
+            "targetCollection": "posts"
+          }
+        },
+        {
+          "slug": "gallery",
+          "label": "Gallery",
+          "type": "repeater",
+          "validation": {
+            "subFields": [
+              {
+                "slug": "image",
+                "type": "image",
+                "label": "Image"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "relations": [
+    {
+      "slug": "posts_projects",
+      "parentCollection": "posts",
+      "childCollection": "projects",
+      "parentLabel": "Posts",
+      "parentLabelSingular": "Post",
+      "childLabel": "Projects",
+      "childLabelSingular": "Project",
+      "maxChildrenPerParent": null,
+      "maxParentsPerChild": null
+    }
+  ],
+  "defaultLocale": "vi",
+  "taxonomies": [
+    {
+      "id": "tax:category",
+      "name": "category",
+      "label": "Categories",
+      "labelSingular": "Category",
+      "hierarchical": true,
+      "collections": ["posts"]
+    },
+    {
+      "id": "tax:labels",
+      "name": "labels",
+      "label": "Labels",
+      "hierarchical": false,
+      "collections": ["projects"]
+    },
+    {
+      "id": "tax:tag",
+      "name": "tag",
+      "label": "Tags",
+      "labelSingular": "Tag",
+      "hierarchical": false,
+      "collections": ["posts"]
+    }
+  ],
+  "menus": [
+    {
+      "id": "menu:primary",
+      "name": "primary",
+      "label": "Primary",
+      "items": [
+        {
+          "type": "custom",
+          "label": "Trang chủ",
+          "url": "/"
+        },
+        {
+          "type": "custom",
+          "label": "Bài viết",
+          "url": "/posts"
+        },
+        {
+          "type": "custom",
+          "label": "Dự án",
+          "url": "/projects"
+        },
+        {
+          "type": "custom",
+          "label": "Giới thiệu",
+          "url": "/about"
+        }
+      ]
+    }
+  ],
+  "widgetAreas": []
+}

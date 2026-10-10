@@ -1,53 +1,43 @@
-# Project Instructions for Raon
+This is an EmDash site -- a CMS built on Astro with a full admin UI.
 
-This document provides essential inline guidance, repository conventions, tech stack details, and command references for AI agents working in this repository.
+## Commands
 
-## Project Overview & Tech Stack
+```bash
+bun dev                # Start the Astro dev server
+bunx emdash types      # Regenerate TypeScript types from a running site
+```
 
-- **Project**: Personal website & developer blog for `tozydev`.
-- **Core Framework**: Astro v7 with TypeScript and MDX integration.
-- **Styling**: Tailwind CSS v4 (`@tailwindcss/vite`), custom `@theme` tokens in [global.css](src/styles/global.css).
-- **Icons**: Lucide Icons (`@lucide/astro`).
-- **Formatting**: Prettier with `prettier-plugin-astro` and `prettier-plugin-tailwindcss`.
-- **Package Manager**: Bun (`bun.lock`).
-- **i18n**: Multilingual support (`vi` default, `en`).
-- **Deployment**: Cloudflare Workers (`wrangler.jsonc`).
+The admin UI is at `http://localhost:4321/_emdash/admin`.
 
-## Primary Commands
+## Key Files
 
-Run commands using `bun`:
+| File                     | Purpose                                                                            |
+| ------------------------ | ---------------------------------------------------------------------------------- |
+| `astro.config.mjs`       | Astro config with `emdash()` integration, database, and storage                    |
+| `src/live.config.ts`     | EmDash loader registration (boilerplate -- don't modify)                           |
+| `seed/seed.json`         | Schema definition + demo content (collections, fields, taxonomies, menus, widgets) |
+| `emdash-env.d.ts`        | Generated types for collections (auto-regenerated on dev server start)             |
+| `src/layouts/Base.astro` | Base layout with EmDash wiring (menus, search, page contributions)                 |
+| `src/pages/`             | Astro pages -- all server-rendered                                                 |
 
-- **Development**: `bun run dev` (Starts local dev server at `http://localhost:4321`)
-- **Build & Typecheck**: `bun run build` (Runs `astro check && astro build`)
-- **Format Code**: `bun run fmt` (Formats codebase using Prettier)
-- **Check Formatting**: `bun run fmt:check` (Validates formatting without modifying files)
-- **Preview Build**: `bun run preview` (Previews production build locally)
+## Skills
 
-## Architecture & Code Conventions
+Agent skills are in `.agents/skills/`. Load them when working on specific tasks:
 
-### Project Structure
+- **building-emdash-site** -- Querying content, rendering Portable Text, schema design, seed files, site features (menus, widgets, search, SEO, comments, bylines). Start here.
+- **creating-plugins** -- Building EmDash plugins with hooks, storage, admin UI, API routes, and Portable Text block types.
+- **emdash-cli** -- CLI commands for content management, seeding, type generation, and visual editing flow.
 
-- `src/components/`: Modular UI components organized by domain (`page/`, `home/`, `posts/`, `projects/`, `about/`).
-- `src/content/`: Utilities for content management (content retrieval).
-- `src/layouts/`: Base HTML structure and metadata in [Base.astro](src/layouts/Base.astro).
-- `src/styles/`: Theme definitions, design tokens, and utility classes in [global.css](src/styles/global.css).
-- `src/consts.ts`: Site-wide constants, profile data, routes, and timeline journey steps.
-- `src/i18n/`: Translation keys, language resolution, and translation helpers (`useTranslations`, `useTranslatedPath`).
-- `plugins/`: Custom plugins for extending Astro's functionality (e.g., remark, rehype plugins).
-- `content/`: Contains content for the site. (NEVER TOUCH THIS DIRECTORY if not asked)
-- `DESIGN.md`: Detailed design system reference (theme tokens, elevation, fonts, component tokens).
+## Documentation
 
-### Key Rules & Guidelines
+The EmDash docs are available as an MCP server at `https://docs.emdashcms.com/mcp`. When you need to verify an API, hook, config option, field type, or pattern, call `search_docs` against the live documentation rather than relying on training-data recall. The docs reflect current behaviour; assumptions may not.
 
-1. **Design System & Styling**:
-   - Refer to [@DESIGN.md](DESIGN.md) for color tokens, typography, and component styling rules.
-   - Use reusable utility classes (`.island`, `.island-interactive`, `.glass`, `.btn`, `.badge`) instead of inline ad-hoc utility duplicates.
-   - Respect light/dark dual theme support via CSS variable tokens (`--color-surface`, `--color-brand`, etc.).
+This template ships with `.mcp.json`, `.cursor/mcp.json`, and `.vscode/mcp.json` so Claude Code, Cursor, and VS Code auto-discover the docs server. Other tools (OpenCode, Windsurf, etc.) need a manual one-time setup -- see [docs.emdashcms.com/docs-mcp](https://docs.emdashcms.com/docs-mcp).
 
-2. **Internationalization (i18n)**:
-   - Always preserve bilingual support (`vi` and `en`) for UI strings and content.
-   - Use translation functions `useTranslations(lang)` and `useTranslatedPath(lang)` when generating text or internal navigation links.
+## Rules
 
-3. **Type Safety & Build Verification**:
-   - Ensure all code passes `bun run build` (`astro check`) without TypeScript or Astro syntax errors.
-   - Run `bun run fmt` before committing code changes to ensure Prettier compliance.
+- All content pages must be server-rendered (`output: "server"`). No `getStaticPaths()` for CMS content.
+- Image fields are objects (`{ src, alt }`), not strings. Use `<Image image={...} />` from `"emdash/ui"`.
+- `entry.id` is the slug (for URLs). `entry.data.id` is the database ULID (for API calls like `getEntryTerms`).
+- When Astro's cache is enabled, pass content-query hints to `Astro.cache.set(cacheHint)`. Use the `WithCacheHint` variants for site settings, menus, taxonomies, and widget areas rendered by cached routes.
+- Taxonomy names in queries must match the seed's `"name"` field exactly (e.g., `"category"` not `"categories"`).

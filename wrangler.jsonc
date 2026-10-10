@@ -1,19 +1,27 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "raon",
-  "compatibility_date": "2026-07-12",
-  "preview_urls": true,
-  "assets": {
-    "directory": "./dist",
-    "not_found_handling": "404-page",
-  },
+  "compatibility_date": "2026-10-10",
+  "compatibility_flags": ["nodejs_compat"],
   "routes": [
     {
       "custom_domain": true,
       "pattern": "tozydev.id.vn",
     },
   ],
-  "build": {
-    "command": "bun run build",
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "raon-db",
+    },
+  ],
+  "r2_buckets": [
+    {
+      "binding": "MEDIA",
+      "bucket_name": "raon-storage",
+    },
+  ],
+  "triggers": {
+    "crons": ["* * * * *"],
   },
 }
