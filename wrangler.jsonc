@@ -24,6 +24,12 @@
       "bucket_name": "raon-storage",
     },
   ],
+  "kv_namespaces": [
+    {
+      "binding": "CACHE",
+      "id": "raon-cache",
+    },
+  ],
   "triggers": {
     "crons": ["* * * * *"],
   },
