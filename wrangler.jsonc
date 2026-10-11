@@ -41,7 +41,6 @@
   "kv_namespaces": [
     {
       "binding": "CACHE",
-      "id": "raon-cache",
     },
   ],
   "triggers": {
