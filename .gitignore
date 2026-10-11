@@ -25,7 +25,9 @@ pnpm-debug.log*
 
 .emdash/migrations.json
 uploads
-data.db
+*.db
+*.db-shm
+*.db-wal
 .wrangler
 
 # Environment / Wrangler secrets

@@ -2,8 +2,54 @@
 import Base from "../layouts/Base.astro"
 ---
 
-<Base title="Not Found">
-  <h1>Page not found</h1>
-  <p>The page you're looking for doesn't exist.</p>
-  <a href="/">Go home</a>
+<Base title="Không tìm thấy trang" robots="noindex, follow">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 py-8">
+    <section>
+      <p class="text-sm font-medium text-neutral-500 mb-2">Lỗi 404</p>
+      <h1 class="text-3xl font-bold mb-3">Không tìm thấy trang</h1>
+      <p class="text-neutral-600 dark:text-neutral-400 mb-6">
+        Trang bạn đang tìm kiếm không tồn tại hoặc đã được di chuyển.
+      </p>
+      <div class="flex gap-3 mb-8">
+        <a
+          href="/"
+          class="px-4 py-2 bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 rounded-lg text-sm"
+        >
+          Về trang chủ
+        </a>
+        <a
+          href="/posts"
+          class="px-4 py-2 border border-neutral-300 dark:border-neutral-700 rounded-lg text-sm"
+        >
+          Xem bài viết
+        </a>
+      </div>
+      <form
+        method="get"
+        action="/search"
+        role="search"
+        aria-label="Tìm kiếm bài viết"
+        class="max-w-md"
+      >
+        <label for="not-found-query" class="sr-only">
+          Tìm kiếm bài viết
+        </label>
+        <div class="flex gap-2">
+          <input
+            id="not-found-query"
+            type="search"
+            name="q"
+            placeholder="Tìm kiếm bài viết..."
+            class="flex-1 px-3 py-2 border border-neutral-300 dark:border-neutral-700 rounded-lg text-sm bg-transparent"
+          />
+          <button
+            type="submit"
+            class="px-4 py-2 bg-neutral-100 dark:bg-neutral-800 rounded-lg text-sm font-medium"
+          >
+            Tìm
+          </button>
+        </div>
+      </form>
+    </section>
+  </div>
 </Base>

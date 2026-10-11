@@ -1,0 +1,212 @@
+---
+export const prerender = false
+
+import { search, getEmDashEntry, getTermsForEntries } from "emdash"
+import { Image } from "emdash/ui"
+import Base from "../layouts/Base.astro"
+import { formatDate } from "../utils/locale"
+import { getReadingTime } from "../utils/reading-time"
+
+const query = Astro.url.searchParams.get("q")?.trim() || ""
+
+const { items: results, nextCursor } = query
+  ? await search(query, { collections: ["posts", "projects"], limit: 30 })
+  : { items: [], nextCursor: undefined }
+
+function escapeHtml(text: string) {
+  return text
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;")
+}
+
+// Fetch full entries for results so we can display featured_image, date, tags, reading time just like posts/index
+const entriesData = await Promise.all(
+  results.map(async (r) => {
+    const coll = r.collection === "projects" ? "projects" : "posts"
+    const entrySlug = r.slug ?? r.id
+    try {
+      const { entry } = await getEmDashEntry(coll, entrySlug)
+      return { searchResult: r, entry, collection: coll }
+    } catch {
+      return { searchResult: r, entry: null, collection: coll }
+    }
+  }),
+)
+
+const postEntryIds = entriesData
+  .filter((item) => item.collection === "posts" && item.entry?.data?.id)
+  .map((item) => item.entry!.data.id)
+
+const tagsByEntry =
+  postEntryIds.length > 0 ? await getTermsForEntries("posts", postEntryIds, "tag") : new Map()
+
+const projectEntryIds = entriesData
+  .filter((item) => item.collection === "projects" && item.entry?.data?.id)
+  .map((item) => item.entry!.data.id)
+
+const labelsByEntry =
+  projectEntryIds.length > 0
+    ? await getTermsForEntries("projects", projectEntryIds, "labels")
+    : new Map()
+
+const rows = entriesData.map(({ searchResult: result, entry, collection }) => {
+  const title = result.title ?? entry?.data?.title ?? "Untitled"
+  const snippetIsTitle =
+    result.snippet?.replaceAll("<mark>", "").replaceAll("</mark>", "") === escapeHtml(title)
+  const isProject = collection === "projects"
+  const tags = entry?.data?.id
+    ? isProject
+      ? (labelsByEntry.get(entry.data.id) ?? [])
+      : (tagsByEntry.get(entry.data.id) ?? [])
+    : []
+
+  const readingTime = !isProject && entry?.data?.content ? getReadingTime(entry.data.content) : null
+  const publishedAt = entry?.data?.publishedAt ? new Date(entry.data.publishedAt) : null
+
+  return {
+    path: `/${collection}/${result.slug ?? result.id}`,
+    collectionLabel: isProject ? "Dự án" : "Bài viết",
+    isProject,
+    title,
+    titleHtml: snippetIsTitle ? result.snippet : undefined,
+    snippet: snippetIsTitle ? undefined : result.snippet,
+    entry,
+    tags,
+    readingTime,
+    publishedAt,
+    featuredImage: entry?.data?.featured_image,
+    excerpt: entry?.data?.excerpt ?? entry?.data?.description,
+  }
+})
+
+const countLabel = nextCursor ? `Khoảng ${rows.length} kết quả đầu tiên` : `${rows.length} kết quả`
+---
+
+<Base
+  title={query ? `Tìm kiếm: ${query}` : "Tìm kiếm"}
+  description="Tìm kiếm bài viết và dự án trên website"
+  type="website"
+  robots="noindex, follow"
+>
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 py-8">
+    <header class="mb-10 max-w-4xl">
+      <p class="text-sm font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider mb-1">
+        Tìm kiếm
+      </p>
+      <h1 class="text-3xl font-bold tracking-tight mb-2">Tìm kiếm nội dung</h1>
+      <p class="text-neutral-600 dark:text-neutral-400 mb-6">
+        Tra cứu bài viết và dự án trên website theo từ khóa.
+      </p>
+
+      <!-- Input tìm kiếm đơn giản -->
+      <form
+        method="get"
+        action="/search"
+        role="search"
+        aria-label="Tìm kiếm nội dung"
+        class="flex gap-2"
+      >
+        <input
+          id="search-input"
+          type="search"
+          name="q"
+          value={query}
+          placeholder="Nhập từ khóa tìm kiếm..."
+          autofocus
+          class="flex-1 px-3.5 py-2 rounded-lg border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 text-neutral-900 dark:text-white placeholder-neutral-400 dark:placeholder-neutral-500 text-sm focus:outline-none focus:border-neutral-950 dark:focus:border-neutral-100"
+        />
+        <button
+          type="submit"
+          class="px-4 py-2 text-sm rounded-lg bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 font-medium hover:opacity-90 transition-opacity"
+        >
+          Tìm
+        </button>
+      </form>
+    </header>
+
+    <section aria-label="Kết quả tìm kiếm" class="max-w-4xl">
+      {query ? (
+        <>
+          <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-6">
+            {countLabel} cho "{query}"
+          </p>
+
+          {rows.length === 0 ? (
+            <div class="p-8 border border-dashed border-neutral-300 dark:border-neutral-700 rounded-xl text-center">
+              <h2 class="text-lg font-semibold mb-2">Không có kết quả nào cho "{query}"</h2>
+              <p class="text-neutral-500 text-sm">
+                Hãy thử sử dụng các từ khóa khác ngắn gọn hoặc tổng quát hơn.
+              </p>
+            </div>
+          ) : (
+            <div class="flex flex-col gap-8 mb-10">
+              {rows.map((row) => (
+                <article class="flex flex-col sm:flex-row gap-6 items-start">
+                  {row.featuredImage && (
+                    <div class="w-full sm:w-56 shrink-0 aspect-video rounded-lg overflow-hidden bg-neutral-100 dark:bg-neutral-800">
+                      <Image image={row.featuredImage} class="w-full h-full object-cover block" />
+                    </div>
+                  )}
+
+                  <div class="flex-1 min-w-0">
+                    <!-- Meta info: Type + Date + Reading time -->
+                    <div class="text-xs text-neutral-500 dark:text-neutral-400 mb-1.5 flex items-center gap-1.5">
+                      <span class="px-1.5 py-0.5 rounded bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 font-medium">
+                        {row.collectionLabel}
+                      </span>
+                      {row.publishedAt && <span>·</span>}
+                      {row.publishedAt && (
+                        <time datetime={row.publishedAt.toISOString()}>
+                          {formatDate(row.publishedAt, "short")}
+                        </time>
+                      )}
+                      {row.readingTime && <span>·</span>}
+                      {row.readingTime && <span>{row.readingTime} phút đọc</span>}
+                    </div>
+
+                    <!-- Title -->
+                    <h2 class="text-lg font-semibold mb-2 leading-snug">
+                      <a href={row.path} class="hover:underline">
+                        {row.titleHtml ? <Fragment set:html={row.titleHtml} /> : row.title}
+                      </a>
+                    </h2>
+
+                    <!-- Snippet / Excerpt -->
+                    {(row.snippet || row.excerpt) && (
+                      <p class="text-sm text-neutral-600 dark:text-neutral-400 line-clamp-2 mb-2.5 leading-relaxed">
+                        {row.snippet ? <Fragment set:html={row.snippet} /> : row.excerpt}
+                      </p>
+                    )}
+
+                    <!-- Tags / Labels -->
+                    {row.tags.length > 0 && (
+                      <div class="flex flex-wrap gap-1.5">
+                        {row.tags.map((t: { label: string; slug: string }) => (
+                          <a
+                            href={row.isProject ? `/projects` : `/tag/${t.slug}`}
+                            class="text-xs px-2 py-0.5 rounded bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400"
+                          >
+                            {t.label}
+                          </a>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </article>
+              ))}
+            </div>
+          )}
+        </>
+      ) : (
+        <div class="p-8 border border-dashed border-neutral-300 dark:border-neutral-700 rounded-xl text-center">
+          <p class="text-neutral-500 text-sm">
+            Gõ từ khóa vào ô trên và nhấn Tìm để tìm kiếm bài viết hoặc dự án.
+          </p>
+        </div>
+      )}
+    </section>
+  </div>
+</Base>

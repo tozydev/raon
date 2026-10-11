@@ -2,63 +2,167 @@
 import { getEmDashCollection, getTermsForEntries } from "emdash"
 import { Image } from "emdash/ui"
 import Base from "../../layouts/Base.astro"
+import { formatDate } from "../../utils/locale"
+import { getReadingTime } from "../../utils/reading-time"
 
-const cursor = Astro.url.searchParams.get("cursor") || undefined
-const {
-  entries: posts,
-  cacheHint,
-  nextCursor,
-} = await getEmDashCollection("posts", {
+const { entries: allPosts, cacheHint } = await getEmDashCollection("posts", {
   orderBy: { published_at: "desc" },
-  limit: 20,
-  cursor,
+  limit: 200,
 })
+
 if (Astro.cache?.enabled) Astro.cache.set(cacheHint)
 
-// Single batched query for tags across every post, instead of calling
-// getEntryTerms() per post (which would be N round-trips).
+// Extract distinct years from all published posts
+const yearsSet = new Set<string>()
+for (const p of allPosts) {
+  if (p.data.publishedAt) {
+    yearsSet.add(new Date(p.data.publishedAt).getFullYear().toString())
+  }
+}
+
+const availableYears = Array.from(yearsSet).sort((a, b) => Number(b) - Number(a))
+
+// Year filter from query param, default to latest year
+const yearParam = Astro.url.searchParams.get("year")
+const currentYear =
+  yearParam && availableYears.includes(yearParam) ? yearParam : (availableYears[0] ?? "")
+
+// Filter posts according to selected year
+const filteredPosts = currentYear
+  ? allPosts.filter(
+      (p) =>
+        p.data.publishedAt && new Date(p.data.publishedAt).getFullYear().toString() === currentYear,
+    )
+  : allPosts
+
 const tagsByEntry = await getTermsForEntries(
   "posts",
-  posts.map((p) => p.data.id),
+  filteredPosts.map((p) => p.data.id),
   "tag",
 )
-const postsWithTags = posts.map((post) => ({
+
+const postsWithData = filteredPosts.map((post) => ({
   post,
   tags: tagsByEntry.get(post.data.id) ?? [],
+  readingTime: getReadingTime(post.data.content),
 }))
 ---
 
-<Base title="Bài viết">
-  <h1>Tất cả bài viết</h1>
+<Base
+  title={currentYear ? `Bài viết năm ${currentYear}` : "Tất cả bài viết"}
+  description="Duyệt tất cả bài viết, sắp xếp theo thời gian mới nhất"
+  type="website"
+>
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 py-8">
+    <header class="mb-8 max-w-4xl">
+      <h1 class="text-3xl font-bold tracking-tight mb-2">Tất cả bài viết</h1>
+      <p class="text-neutral-600 dark:text-neutral-400">
+        Tất cả bài viết chia sẻ, ghi chép cá nhân theo thời gian mới nhất.
+      </p>
+    </header>
 
-  {postsWithTags.length === 0 ? (
-    <p>Chưa có bài viết.</p>
-  ) : (
-    <ul>
-      {postsWithTags.map(({ post, tags }) => (
-        <li>
-          <a href={`/posts/${post.id}`}>
-            {post.data.featured_image && (
-              <div {...post.edit.featured_image}>
-                <Image image={post.data.featured_image} />
+    <!-- Phân trang theo năm (Chỉ gồm các năm) -->
+    {availableYears.length > 1 && (
+      <nav
+        aria-label="Phân trang theo năm"
+        class="flex flex-wrap items-center gap-2 mb-10 max-w-4xl"
+      >
+        {availableYears.map((yr) => {
+          const count = allPosts.filter(
+            (p) =>
+              p.data.publishedAt && new Date(p.data.publishedAt).getFullYear().toString() === yr,
+          ).length
+          const isActive = currentYear === yr
+          return (
+            <a
+              href={`/posts?year=${yr}`}
+              class:list={[
+                "px-3 py-1 text-xs rounded-md transition-colors",
+                isActive
+                  ? "bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 font-medium"
+                  : "bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 hover:text-neutral-950 dark:hover:text-white",
+              ]}
+            >
+              {yr} ({count})
+            </a>
+          )
+        })}
+      </nav>
+    )}
+
+    <section aria-label="Danh sách bài viết" class="max-w-4xl">
+      {postsWithData.length === 0 ? (
+        <div class="p-8 border border-dashed border-neutral-300 dark:border-neutral-700 rounded-xl text-center">
+          <h2 class="text-lg font-semibold mb-2">Chưa có bài viết</h2>
+          <p class="text-neutral-500 text-sm">
+            {currentYear
+              ? `Không có bài viết nào trong năm ${currentYear}.`
+              : "Các bài viết được xuất bản sẽ hiển thị tại đây."}
+          </p>
+        </div>
+      ) : (
+        <div class="flex flex-col gap-8">
+          {postsWithData.map(({ post, tags, readingTime }) => (
+            <article class="flex flex-col sm:flex-row gap-6 items-start">
+              {post.data.featured_image && (
+                <div
+                  {...post.edit.featured_image}
+                  class="w-full sm:w-56 shrink-0 aspect-video rounded-lg overflow-hidden bg-neutral-100 dark:bg-neutral-800"
+                >
+                  <Image
+                    image={post.data.featured_image}
+                    class="w-full h-full object-cover block"
+                  />
+                </div>
+              )}
+
+              <div class="flex-1 min-w-0">
+                <!-- Date + reading time -->
+                <div class="text-xs text-neutral-500 dark:text-neutral-400 mb-1.5 flex items-center gap-1.5">
+                  {post.data.publishedAt && (
+                    <time datetime={post.data.publishedAt.toISOString()}>
+                      {formatDate(post.data.publishedAt, "short")}
+                    </time>
+                  )}
+                  {post.data.publishedAt && <span>·</span>}
+                  <span>{readingTime} phút đọc</span>
+                </div>
+
+                <!-- Title -->
+                <h2 class="text-lg font-semibold mb-2 leading-snug">
+                  <a href={`/posts/${post.id}`}>
+                    <span {...post.edit.title}>{post.data.title}</span>
+                  </a>
+                </h2>
+
+                <!-- Excerpt -->
+                {post.data.excerpt && (
+                  <p
+                    {...post.edit.excerpt}
+                    class="text-sm text-neutral-600 dark:text-neutral-400 line-clamp-2 mb-2.5"
+                  >
+                    {post.data.excerpt}
+                  </p>
+                )}
+
+                <!-- Tags (no divider) -->
+                {tags.length > 0 && (
+                  <div class="flex flex-wrap gap-1.5">
+                    {tags.map((t) => (
+                      <a
+                        href={`/tag/${t.slug}`}
+                        class="text-xs px-2 py-0.5 rounded bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400"
+                      >
+                        {t.label}
+                      </a>
+                    ))}
+                  </div>
+                )}
               </div>
-            )}
-            <h2 {...post.edit.title}>{post.data.title}</h2>
-          </a>
-          {post.data.excerpt && <p {...post.edit.excerpt}>{post.data.excerpt}</p>}
-          {tags.length > 0 && (
-            <div>
-              {tags.map((t) => (
-                <a href={`/tag/${t.slug}`}>{t.label}</a>
-              ))}
-            </div>
-          )}
-        </li>
-      ))}
-    </ul>
-  )}
-  <nav aria-label="Pagination">
-    {cursor && <a href="/posts">First page</a>}
-    {nextCursor && <a href={`/posts?cursor=${encodeURIComponent(nextCursor)}`}>Next page</a>}
-  </nav>
+            </article>
+          ))}
+        </div>
+      )}
+    </section>
+  </div>
 </Base>

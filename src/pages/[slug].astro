@@ -7,13 +7,13 @@ import { resolveStarterSiteIdentity } from "../utils/site-identity"
 const slug = decodeSlug(Astro.params.slug)
 
 if (!slug) {
-  return Astro.redirect("/404")
+  return Astro.rewrite("/404")
 }
 
 const { entry: page, cacheHint } = await getEmDashEntry("pages", slug)
 
 if (!page) {
-  return Astro.redirect("/404")
+  return Astro.rewrite("/404")
 }
 
 if (Astro.cache?.enabled) Astro.cache.set(cacheHint)
@@ -31,11 +31,14 @@ const seo = getSeoMeta(page, {
   pageTitle={seo.ogTitle}
   description={seo.description}
   canonical={seo.canonical}
+  robots={seo.robots}
+  image={seo.ogImage}
+  type="website"
   content={{ collection: "pages", id: page.data.id, slug }}
 >
-  <article>
-    <h1 {...page.edit.title}>{page.data.title}</h1>
-
-    <PortableText value={page.data.content} />
-  </article>
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 py-8">
+    <article class="prose dark:prose-invert max-w-none">
+      {page.data.content && <PortableText value={page.data.content} />}
+    </article>
+  </div>
 </Base>

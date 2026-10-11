@@ -10,6 +10,14 @@ export interface StarterSiteIdentitySettings {
   tagline?: string
   logo?: MediaReference
   favicon?: MediaReference
+  social?: {
+    twitter?: string
+    github?: string
+    facebook?: string
+    instagram?: string
+    linkedin?: string
+    youtube?: string
+  }
 }
 
 const DEFAULT_SITE_TITLE = "tozydev"
@@ -20,5 +28,6 @@ export function resolveStarterSiteIdentity(settings?: StarterSiteIdentitySetting
     siteTitle: settings?.title ?? DEFAULT_SITE_TITLE,
     siteTagline: settings?.tagline ?? DEFAULT_SITE_TAGLINE,
     siteLogo: settings?.logo?.url ? settings.logo : null,
+    social: settings?.social,
   }
 }

@@ -17,7 +17,7 @@
   ],
   "r2_buckets": [
     {
-      "binding": "MEDIA",
+      "binding": "STORAGE",
       "bucket_name": "raon-storage",
     },
   ],

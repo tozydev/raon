@@ -2,8 +2,10 @@
 import { getMenuWithCacheHint, getSiteSettingsWithCacheHint } from "emdash"
 import { EmDashHead, EmDashBodyStart, EmDashBodyEnd } from "emdash/ui"
 import { createPublicPageContext } from "emdash/page"
-import LiveSearch from "emdash/ui/search"
+import { Search, Sun, Moon, Monitor } from "reicon-astro"
+import { getSiteLocale } from "../utils/locale"
 import { resolveStarterSiteIdentity } from "../utils/site-identity"
+import "../styles/main.css"
 
 interface Props {
   title: string
@@ -11,83 +13,358 @@ interface Props {
   description?: string | null
   image?: string | null
   canonical?: string | null
+  robots?: string | null
+  type?: "website" | "article"
+  publishedTime?: string | null
+  modifiedTime?: string | null
+  author?: string | null
   /** Pass content reference for plugin page contributions on content pages */
   content?: { collection: string; id: string; slug?: string | null }
 }
 
-const locale = Astro.currentLocale ?? "vi"
-const { title, pageTitle, description, image, canonical, content } = Astro.props
+const {
+  title,
+  pageTitle,
+  description,
+  image,
+  canonical,
+  robots,
+  type = "website",
+  publishedTime,
+  modifiedTime,
+  author,
+  content,
+} = Astro.props
+
 const [settingsResult, menuResult] = await Promise.all([
   getSiteSettingsWithCacheHint(),
   getMenuWithCacheHint("primary"),
 ])
+
 if (Astro.cache?.enabled) {
   Astro.cache.set(settingsResult.cacheHint)
   Astro.cache.set(menuResult.cacheHint)
 }
 
-const { siteTitle, siteTagline, siteLogo } = resolveStarterSiteIdentity(settingsResult.data)
+const { siteTitle, siteTagline, siteLogo, social } = resolveStarterSiteIdentity(settingsResult.data)
+
+const socialConfig: Record<string, { label: string; baseUrl: string }> = {
+  github: { label: "GitHub", baseUrl: "https://github.com" },
+  twitter: { label: "X (Twitter)", baseUrl: "https://x.com" },
+  facebook: { label: "Facebook", baseUrl: "https://facebook.com" },
+  instagram: { label: "Instagram", baseUrl: "https://instagram.com" },
+  linkedin: { label: "LinkedIn", baseUrl: "https://linkedin.com/in" },
+  youtube: { label: "YouTube", baseUrl: "https://youtube.com/@" },
+}
+
+const socialLinks = Object.entries(social ?? {})
+  .filter(([, value]) => typeof value === "string" && value.trim().length > 0)
+  .map(([platform, value]) => {
+    let raw = (value as string).trim()
+    const config = socialConfig[platform]
+
+    let finalUrl = raw
+    if (raw.startsWith("http://") || raw.startsWith("https://")) {
+      finalUrl = raw
+    } else {
+      // Bỏ ký tự '@' ở đầu nếu có
+      raw = raw.replace(/^@/, "")
+      const base = config?.baseUrl ?? "https://"
+      finalUrl = base.endsWith("/") || base.endsWith("@") ? `${base}${raw}` : `${base}/${raw}`
+    }
+
+    return {
+      platform,
+      label: config?.label ?? platform,
+      url: finalUrl,
+    }
+  })
+
 const titleIncludesSiteName =
   title === siteTitle || title.endsWith(` | ${siteTitle}`) || title.endsWith(` — ${siteTitle}`)
-const fullTitle = titleIncludesSiteName ? title : `${title} | ${siteTitle}`
+const fullTitle = titleIncludesSiteName ? title : `${title} — ${siteTitle}`
 const pageDescription = description ?? siteTagline
 const menu = menuResult.data
+const menuItems = menu?.items ?? []
 
+// Build public page context for plugin contributions and SEO
 const pageCtx = createPublicPageContext({
   Astro,
   kind: content ? "content" : "custom",
-  pageType: "website",
+  pageType: type,
   title: fullTitle,
   pageTitle: pageTitle ?? title,
   description: pageDescription,
   canonical,
   image,
   content,
+  seo: { ogImage: image, robots },
+  articleMeta: { publishedTime, modifiedTime, author },
   siteName: siteTitle,
 })
+
+// Check if user is logged in (for showing admin link)
+const isLoggedIn = !!Astro.locals?.user
+
+const TRAILING_SLASH = /\/$/
+const currentPath = Astro.url.pathname.replace(TRAILING_SLASH, "") || "/"
+
+/** "page" for the current page, "true" for its parent section */
+function navCurrent(url: string): "page" | "true" | undefined {
+  let target: URL
+  try {
+    target = new URL(url, Astro.url)
+  } catch {
+    return undefined
+  }
+  if (target.origin !== Astro.url.origin || target.hash) return undefined
+  if (target.search && target.search !== Astro.url.search) return undefined
+  const path = target.pathname.replace(TRAILING_SLASH, "") || "/"
+  if (path === currentPath) return "page"
+  if (path !== "/" && currentPath.startsWith(`${path}/`)) return "true"
+  return undefined
+}
+
+const lang = getSiteLocale() ?? Astro.currentLocale ?? "vi"
+const year = new Date().getFullYear()
 ---
 
 <!doctype html>
-<html lang={locale}>
+<html lang={lang}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/_raon/images/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="96x96" href="/_raon/images/favicon-96x96.png" />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/_raon/images/apple-touch-icon.png" />
     <title>{fullTitle}</title>
     <EmDashHead page={pageCtx} />
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title={`${siteTitle} RSS Feed`}
+      href="/rss.xml"
+    />
+    <script is:inline>
+      ;(function () {
+        var row = document.cookie.split("; ").find(function (item) {
+          return item.startsWith("theme=")
+        })
+        var theme = row ? row.slice(6) : null
+        if (theme === "dark" || theme === "light") {
+          document.documentElement.classList.add(theme)
+        } else if (!theme && window.matchMedia("(prefers-color-scheme: dark)").matches) {
+          document.documentElement.classList.add("dark")
+        }
+      })()
+    </script>
   </head>
-  <body>
+  <body class="min-h-screen flex flex-col bg-white text-neutral-900 dark:bg-neutral-950 dark:text-neutral-100 antialiased">
     <EmDashBodyStart page={pageCtx} />
 
-    <header>
-      <nav>
-        <a href="/">
+    <a
+      href="#main"
+      class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-neutral-900 focus:text-white dark:focus:bg-white dark:focus:text-neutral-900 focus:rounded"
+    >
+      Bỏ qua đến nội dung
+    </a>
+
+    <header class="w-full border-b border-neutral-200 dark:border-neutral-800">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 grid grid-cols-[auto_1fr_auto] items-center gap-4">
+        <a href="/" class="font-semibold text-lg shrink-0">
           {siteLogo ? (
-            <img
-              src={siteLogo.url}
-              alt={siteLogo.alt || siteTitle}
-              style="height:48px;width:auto;margin:-8px 0;display:block;"
-            />
+            <img src={siteLogo.url} alt={siteLogo.alt || siteTitle} class="h-8 w-auto block" />
           ) : (
-            siteTitle
+            <span>{siteTitle}</span>
           )}
         </a>
-        {menu?.items.map((item) => (
+
+        {menuItems.length > 0 && (
+          <nav aria-label="Main" class="flex justify-center">
+            <ul class="flex items-center gap-6">
+              {menuItems.map((item) => (
+                <li>
+                  <a
+                    href={item.url}
+                    target={item.target}
+                    rel={item.target === "_blank" ? "noopener noreferrer" : undefined}
+                    aria-current={navCurrent(item.url)}
+                    class="text-neutral-600 hover:text-neutral-950 dark:text-neutral-400 dark:hover:text-white transition-colors aria-[current=page]:font-medium aria-[current=page]:text-neutral-950 dark:aria-[current=page]:text-white"
+                  >
+                    {item.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        )}
+
+        <div class="flex items-center gap-3 justify-end">
           <a
-            href={item.url}
-            target={item.target}
-            rel={item.target === "_blank" ? "noopener noreferrer" : undefined}
+            href="/search"
+            aria-label="Tìm kiếm"
+            class="p-2 text-neutral-600 hover:text-neutral-950 dark:text-neutral-400 dark:hover:text-white rounded-md hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
           >
-            {item.label}
+            <Search size={18} />
           </a>
-        ))}
-        <LiveSearch placeholder="Search..." collections={["posts", "pages"]} />
-      </nav>
+
+          {isLoggedIn && (
+            <a
+              href="/_emdash/admin"
+              class="text-sm px-2.5 py-1 border border-neutral-300 dark:border-neutral-700 rounded hover:bg-neutral-100 dark:hover:bg-neutral-800"
+            >
+              Admin
+            </a>
+          )}
+        </div>
+      </div>
     </header>
 
-    <main>
+    <main id="main" tabindex="-1" class="flex-1 w-full outline-none">
       <slot />
     </main>
 
+    <footer class="w-full border-t border-neutral-200 dark:border-neutral-800 mt-auto py-5">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-neutral-600 dark:text-neutral-400">
+        <div class="flex flex-wrap items-center gap-x-2 gap-y-1">
+          <span>{`© ${year} ${siteTitle}.`}</span>
+          <span>
+            Powered by{" "}
+            <a
+              href="https://emdashcms.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="hover:text-neutral-950 dark:hover:text-white underline underline-offset-2"
+            >
+              EmDash
+            </a>
+          </span>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-4 sm:gap-6">
+          {socialLinks.length > 0 && (
+            <div class="flex items-center gap-4">
+              {socialLinks.map((item) => (
+                <a
+                  href={item.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="hover:text-neutral-950 dark:hover:text-white transition-colors"
+                >
+                  {item.label}
+                </a>
+              ))}
+            </div>
+          )}
+
+          <a href="/rss.xml" class="hover:text-neutral-950 dark:hover:text-white transition-colors">
+            RSS feed
+          </a>
+
+          <div
+            role="group"
+            aria-label="Giao diện hiển thị"
+            class="flex items-center gap-1 border border-neutral-200 dark:border-neutral-800 rounded p-0.5"
+          >
+            <button
+              type="button"
+              class="theme-btn p-1.5 rounded transition-colors text-neutral-500 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white aria-pressed:bg-neutral-200 dark:aria-pressed:bg-neutral-800 aria-pressed:text-neutral-950 dark:aria-pressed:text-white"
+              data-theme="light"
+              aria-label="Chế độ sáng"
+              title="Sáng"
+            >
+              <Sun size={15} />
+            </button>
+            <button
+              type="button"
+              class="theme-btn p-1.5 rounded transition-colors text-neutral-500 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white aria-pressed:bg-neutral-200 dark:aria-pressed:bg-neutral-800 aria-pressed:text-neutral-950 dark:aria-pressed:text-white"
+              data-theme="dark"
+              aria-label="Chế độ tối"
+              title="Tối"
+            >
+              <Moon size={15} />
+            </button>
+            <button
+              type="button"
+              class="theme-btn p-1.5 rounded transition-colors text-neutral-500 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white aria-pressed:bg-neutral-200 dark:aria-pressed:bg-neutral-800 aria-pressed:text-neutral-950 dark:aria-pressed:text-white"
+              data-theme="system"
+              aria-label="Theo hệ thống"
+              title="Hệ thống"
+            >
+              <Monitor size={15} />
+            </button>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      const themeBtns = document.querySelectorAll<HTMLButtonElement>(".theme-btn")
+      const root = document.documentElement
+
+      function setCookie(name: string, value: string, maxAge: number = 31536000) {
+        const secure = location.protocol === "https:" ? "; Secure" : ""
+        if (value === "") {
+          document.cookie = `${name}=; path=/; max-age=0; SameSite=Lax${secure}`
+        } else {
+          document.cookie = `${name}=${value}; path=/; max-age=${maxAge}; SameSite=Lax${secure}`
+        }
+      }
+
+      function applyThemeClass(theme: string) {
+        root.classList.remove("light", "dark")
+        if (theme === "dark" || theme === "light") {
+          root.classList.add(theme)
+        } else if (theme === "system") {
+          if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+            root.classList.add("dark")
+          }
+        }
+      }
+
+      function setTheme(theme: string) {
+        if (theme === "system") {
+          setCookie("theme", "")
+        } else {
+          setCookie("theme", theme)
+        }
+        applyThemeClass(theme)
+        updateActiveBtn(theme)
+      }
+
+      function updateActiveBtn(theme: string) {
+        themeBtns.forEach((btn) => {
+          const active = btn.dataset.theme === theme
+          btn.setAttribute("aria-pressed", String(active))
+        })
+      }
+
+      function getStoredTheme(): string {
+        const row = document.cookie.split("; ").find((item) => item.startsWith("theme="))
+        return row?.slice(6) || "system"
+      }
+
+      // Khởi tạo trạng thái giao diện ban đầu
+      const initialTheme = getStoredTheme()
+      setTheme(initialTheme)
+
+      // Lắng nghe thay đổi theme từ hệ điều hành khi đang ở chế độ system
+      window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", (e) => {
+        if (getStoredTheme() === "system") {
+          root.classList.remove("light", "dark")
+          if (e.matches) {
+            root.classList.add("dark")
+          }
+        }
+      })
+
+      themeBtns.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          setTheme(btn.dataset.theme || "system")
+        })
+      })
+    </script>
     <EmDashBodyEnd page={pageCtx} />
   </body>
 </html>

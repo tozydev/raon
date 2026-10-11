@@ -7,6 +7,10 @@
   },
   "settings": {
     "dateFormat": "MMM d, yyyy",
+    "social": {
+      "github": "tozydev",
+      "linkedin": "tozydev"
+    },
     "tagline": "Website cá nhân của Thanh Tân (tozydev)",
     "timezone": "Asia/Saigon",
     "title": "tozydev"
@@ -18,6 +22,7 @@
       "label": "Pages",
       "labelSingular": "Page",
       "supports": ["drafts", "revisions", "search", "preview"],
+      "urlPattern": "/{slug}",
       "fields": [
         {
           "slug": "title",

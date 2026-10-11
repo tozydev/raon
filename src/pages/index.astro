@@ -1,48 +1,413 @@
 ---
-import { getEmDashCollection, getSiteSettings } from "emdash"
+import { getEmDashCollection, getTermsForEntries, getSiteSettings } from "emdash"
 import { Image } from "emdash/ui"
+import { ArrowLeft2, ArrowRight2, Link } from "reicon-astro"
 import Base from "../layouts/Base.astro"
 import { resolveStarterSiteIdentity } from "../utils/site-identity"
+import { formatDate } from "../utils/locale"
+import { getReadingTime } from "../utils/reading-time"
 
-const { entries: posts, cacheHint } = await getEmDashCollection("posts", {
-  orderBy: { published_at: "desc" },
-  limit: 10,
-})
-const { siteTitle, siteTagline } = resolveStarterSiteIdentity(await getSiteSettings())
-if (Astro.cache?.enabled) Astro.cache.set(cacheHint)
+const [
+  { entries: recentPosts, cacheHint: postsCacheHint },
+  { entries: allProjects, cacheHint: projectsCacheHint },
+  settings,
+] = await Promise.all([
+  getEmDashCollection("posts", {
+    orderBy: { published_at: "desc" },
+    limit: 7,
+  }),
+  getEmDashCollection("projects", {
+    orderBy: { published_at: "desc" },
+    limit: 12,
+  }),
+  getSiteSettings(),
+])
+
+const { siteTitle, siteTagline } = resolveStarterSiteIdentity(settings)
+
+if (Astro.cache?.enabled) {
+  Astro.cache.set(postsCacheHint)
+  Astro.cache.set(projectsCacheHint)
+}
+
+// Lọc các dự án nổi bật (featured === true), nếu không có thì lấy các dự án gần nhất
+const featuredProjects =
+  allProjects.filter((p) => p.data.featured).length > 0
+    ? allProjects.filter((p) => p.data.featured)
+    : allProjects.slice(0, 6)
+
+// Batched query cho tags của 7 bài viết gần đây
+const tagEntryIds = recentPosts.map((p) => p.data.id)
+const tagsByEntry = await getTermsForEntries("posts", tagEntryIds, "tag")
+
+const postsWithData = recentPosts.map((post) => ({
+  post,
+  tags: tagsByEntry.get(post.data.id) ?? [],
+  readingTime: getReadingTime(post.data.content),
+}))
+
+// Batched query cho labels của các dự án featured
+const projectIds = featuredProjects.map((p) => p.data.id)
+const labelsByEntry = await getTermsForEntries("projects", projectIds, "labels")
+
+const featuredProjectsWithLabels = featuredProjects.map((project) => ({
+  project,
+  labels: labelsByEntry.get(project.data.id) ?? [],
+}))
 ---
 
-<Base title="Trang chủ" description={siteTagline}>
-  <h1>Bài viết gần đây</h1>
+<Base title={siteTitle} description={siteTagline} type="website">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 py-8">
+    <!-- Hero Section -->
+    <header class="mb-16 pt-2 pb-6 max-w-3xl">
+      <h1 class="font-extrabold tracking-tight mb-6 leading-[1.15]">
+        <span class="block text-3xl sm:text-4xl text-neutral-900 dark:text-neutral-100 mb-1">
+          Hi! Tôi là
+        </span>
+        <span class="block text-5xl sm:text-6xl text-neutral-950 dark:text-white">Thanh Tân.</span>
+      </h1>
 
-  {posts.length === 0 ? (
-    <p>
-      Chưa có vài viết. <a href="/_emdash/admin/content/posts/new">Tạo mới</a>.
-    </p>
-  ) : (
-    <ul>
-      {posts.map((post) => (
-        <li>
-          <a href={`/posts/${post.id}`}>
-            {post.data.featured_image && (
-              <div {...post.edit.featured_image}>
-                <Image image={post.data.featured_image} />
-              </div>
-            )}
-            <h2 {...post.edit.title}>{post.data.title}</h2>
+      <div class="text-base sm:text-lg text-neutral-600 dark:text-neutral-400 leading-relaxed space-y-2 mb-8">
+        <p>Tôi là một Software Developer. Tôi thích xây dựng các ứng dụng bằng Kotlin.</p>
+        <p>
+          Tôi cũng thích học hỏi các công nghệ mới và chia sẻ câu chuyện của mình với mọi người.
+        </p>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-3">
+        <a
+          href="/about"
+          class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-neutral-900 hover:bg-neutral-800 dark:bg-white dark:hover:bg-neutral-100 text-white dark:text-neutral-950 text-sm font-semibold transition-colors"
+        >
+          <span>Tìm hiểu thêm</span>
+          <svg
+            viewBox="0 0 24 24"
+            width="16"
+            height="16"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <line x1="5" y1="12" x2="19" y2="12" />
+            <polyline points="12 5 19 12 12 19" />
+          </svg>
+        </a>
+
+        <a
+          href="https://github.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg border border-neutral-300 dark:border-neutral-800 bg-transparent hover:bg-neutral-100 dark:hover:bg-neutral-900 text-neutral-900 dark:text-neutral-100 text-sm font-semibold transition-colors"
+        >
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true">
+            <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
+          </svg>
+          <span>GitHub</span>
+        </a>
+      </div>
+    </header>
+
+    <!-- Featured Projects Carousel -->
+    {featuredProjectsWithLabels.length > 0 && (
+      <section aria-label="Dự án nổi bật" class="mb-16">
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-2xl font-semibold tracking-tight">Dự án nổi bật</h2>
+          <a
+            href="/projects"
+            class="text-sm text-neutral-600 dark:text-neutral-400 hover:text-neutral-950 dark:hover:text-white"
+          >
+            Xem tất cả
           </a>
-          {post.data.excerpt && <p {...post.edit.excerpt}>{post.data.excerpt}</p>}
-          {post.data.publishedAt && (
-            <time datetime={post.data.publishedAt.toISOString()}>
-              {post.data.publishedAt.toLocaleDateString("vi-VN", {
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-              })}
-            </time>
+        </div>
+
+        <div
+          id="project-carousel"
+          class="flex gap-6 overflow-x-auto snap-x snap-mandatory scroll-smooth no-scrollbar pb-1"
+        >
+          {featuredProjectsWithLabels.map(({ project, labels }) => (
+            <article class="carousel-item w-full sm:w-[calc((100%-1.5rem)/2)] lg:w-[calc((100%-3rem)/3)] shrink-0 snap-start border border-neutral-200 dark:border-neutral-800 rounded-xl overflow-hidden flex flex-col bg-white dark:bg-neutral-900/50">
+              {project.data.featured_image && (
+                <div
+                  {...project.edit.featured_image}
+                  class="aspect-video w-full overflow-hidden bg-neutral-100 dark:bg-neutral-800"
+                >
+                  <Image image={project.data.featured_image} class="w-full h-full object-cover" />
+                </div>
+              )}
+              <div class="p-4 flex-1 flex flex-col">
+                <!-- Tiêu đề ngang hàng với các icon liên kết (Demo, GitHub) -->
+                <div class="flex items-start justify-between gap-2 mb-2">
+                  <h3 class="text-base font-semibold leading-snug">
+                    <a href={`/projects/${project.id}`}>
+                      <span {...project.edit.title}>{project.data.title}</span>
+                    </a>
+                  </h3>
+
+                  {(project.data.link || project.data.github) && (
+                    <div class="flex items-center gap-1.5 shrink-0 pt-0.5">
+                      {project.data.link && (
+                        <a
+                          href={project.data.link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          aria-label="Xem dự án trực tuyến"
+                          title="Xem dự án trực tuyến"
+                          class="p-1 text-neutral-600 hover:text-neutral-950 dark:text-neutral-400 dark:hover:text-white rounded"
+                        >
+                          <Link size={16} />
+                        </a>
+                      )}
+                      {project.data.github && (
+                        <a
+                          href={project.data.github}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          aria-label="Mã nguồn GitHub"
+                          title="Mã nguồn GitHub"
+                          class="p-1 text-neutral-600 hover:text-neutral-950 dark:text-neutral-400 dark:hover:text-white rounded"
+                        >
+                          <svg
+                            viewBox="0 0 24 24"
+                            width="16"
+                            height="16"
+                            fill="currentColor"
+                            aria-hidden="true"
+                          >
+                            <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
+                          </svg>
+                        </a>
+                      )}
+                    </div>
+                  )}
+                </div>
+
+                <!-- Mô tả dự án -->
+                {project.data.description && (
+                  <p
+                    {...project.edit.description}
+                    class="text-sm text-neutral-600 dark:text-neutral-400 line-clamp-2 mb-3"
+                  >
+                    {project.data.description}
+                  </p>
+                )}
+
+                <!-- Labels taxonomy ở phía dưới cùng -->
+                {labels.length > 0 && (
+                  <div class="mt-auto pt-2 flex flex-wrap gap-1.5">
+                    {labels.map((l) => (
+                      <span class="text-xs px-2 py-0.5 rounded bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 font-medium">
+                        {l.label}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </article>
+          ))}
+        </div>
+
+        <!-- Điều hướng Carousel bên dưới (Nút icon mũi tên lệch về bên phải, không có dots) -->
+        <div class="flex items-center justify-end gap-2 mt-6">
+          <button
+            type="button"
+            id="carousel-prev"
+            aria-label="Dự án trước"
+            class="p-1.5 text-neutral-500 hover:text-neutral-950 dark:text-neutral-400 dark:hover:text-white transition-colors"
+          >
+            <ArrowLeft2 size={18} />
+          </button>
+          <button
+            type="button"
+            id="carousel-next"
+            aria-label="Dự án tiếp theo"
+            class="p-1.5 text-neutral-500 hover:text-neutral-950 dark:text-neutral-400 dark:hover:text-white transition-colors"
+          >
+            <ArrowRight2 size={18} />
+          </button>
+        </div>
+      </section>
+    )}
+
+    <!-- Recent Posts Section -->
+    <section aria-label="Bài viết gần đây" class="mb-16">
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-2xl font-semibold tracking-tight">Bài viết gần đây</h2>
+        <a
+          href="/posts"
+          class="text-sm text-neutral-600 dark:text-neutral-400 hover:text-neutral-950 dark:hover:text-white"
+        >
+          Xem tất cả bài viết
+        </a>
+      </div>
+
+      {postsWithData.length === 0 ? (
+        <div class="p-8 border border-dashed border-neutral-300 dark:border-neutral-700 rounded-xl text-center">
+          <p class="text-neutral-500">Chưa có bài viết nào được xuất bản.</p>
+        </div>
+      ) : (
+        <div class="flex flex-col gap-6">
+          <!-- Bài viết nổi bật mới nhất: Chiếm trọn 1 hàng (full width) dạng card ngang -->
+          {postsWithData[0] && (
+            <article class="w-full border border-neutral-200 dark:border-neutral-800 rounded-xl overflow-hidden flex flex-col md:flex-row bg-white dark:bg-neutral-900/50">
+              {postsWithData[0].post.data.featured_image && (
+                <div
+                  {...postsWithData[0].post.edit.featured_image}
+                  class="w-full md:w-5/12 aspect-video md:aspect-auto shrink-0 overflow-hidden bg-neutral-100 dark:bg-neutral-800"
+                >
+                  <Image
+                    image={postsWithData[0].post.data.featured_image}
+                    class="w-full h-full object-cover"
+                  />
+                </div>
+              )}
+              <div class="p-6 md:p-8 flex-1 flex flex-col justify-between min-w-0">
+                <div>
+                  <!-- Date + reading time -->
+                  <div class="text-xs text-neutral-500 dark:text-neutral-400 mb-2.5 flex items-center gap-1.5">
+                    {postsWithData[0].post.data.publishedAt && (
+                      <time datetime={postsWithData[0].post.data.publishedAt.toISOString()}>
+                        {formatDate(postsWithData[0].post.data.publishedAt, "short")}
+                      </time>
+                    )}
+                    {postsWithData[0].post.data.publishedAt && <span>·</span>}
+                    <span>{postsWithData[0].readingTime} phút đọc</span>
+                  </div>
+
+                  <!-- Title -->
+                  <h3 class="text-xl sm:text-2xl font-bold mb-3 leading-snug">
+                    <a href={`/posts/${postsWithData[0].post.id}`} class="hover:underline">
+                      <span {...postsWithData[0].post.edit.title}>
+                        {postsWithData[0].post.data.title}
+                      </span>
+                    </a>
+                  </h3>
+
+                  <!-- Excerpt -->
+                  {postsWithData[0].post.data.excerpt && (
+                    <p
+                      {...postsWithData[0].post.edit.excerpt}
+                      class="text-sm sm:text-base text-neutral-600 dark:text-neutral-400 line-clamp-3 mb-6 leading-relaxed"
+                    >
+                      {postsWithData[0].post.data.excerpt}
+                    </p>
+                  )}
+                </div>
+
+                <!-- Tags & CTA text button đọc bài viết -->
+                <div class="pt-2 flex flex-wrap items-center justify-between gap-3">
+                  {postsWithData[0].tags.length > 0 ? (
+                    <div class="flex flex-wrap gap-1.5">
+                      {postsWithData[0].tags.map((tag) => (
+                        <a
+                          href={`/tag/${tag.slug}`}
+                          class="text-xs px-2 py-0.5 rounded bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400"
+                        >
+                          {tag.label}
+                        </a>
+                      ))}
+                    </div>
+                  ) : (
+                    <div />
+                  )}
+
+                  <a
+                    href={`/posts/${postsWithData[0].post.id}`}
+                    class="inline-flex items-center gap-1 text-sm font-medium text-neutral-900 dark:text-white hover:underline shrink-0"
+                  >
+                    <span>Đọc bài viết</span>
+                    <ArrowRight2 size={14} />
+                  </a>
+                </div>
+              </div>
+            </article>
           )}
-        </li>
-      ))}
-    </ul>
-  )}
+
+          <!-- Các bài viết còn lại: Xếp lưới 3 cột bên dưới -->
+          {postsWithData.length > 1 && (
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {postsWithData.slice(1).map(({ post, tags, readingTime }) => (
+                <article class="border border-neutral-200 dark:border-neutral-800 rounded-xl overflow-hidden flex flex-col bg-white dark:bg-neutral-900/50">
+                  {post.data.featured_image && (
+                    <div
+                      {...post.edit.featured_image}
+                      class="aspect-video w-full overflow-hidden bg-neutral-100 dark:bg-neutral-800"
+                    >
+                      <Image image={post.data.featured_image} class="w-full h-full object-cover" />
+                    </div>
+                  )}
+                  <div class="p-5 flex-1 flex flex-col">
+                    <!-- Date + reading time -->
+                    <div class="text-xs text-neutral-500 dark:text-neutral-400 mb-2 flex items-center gap-1.5">
+                      {post.data.publishedAt && (
+                        <time datetime={post.data.publishedAt.toISOString()}>
+                          {formatDate(post.data.publishedAt, "short")}
+                        </time>
+                      )}
+                      {post.data.publishedAt && <span>·</span>}
+                      <span>{readingTime} phút đọc</span>
+                    </div>
+
+                    <!-- Title -->
+                    <h3 class="text-base font-semibold mb-2">
+                      <a href={`/posts/${post.id}`} class="hover:underline">
+                        <span {...post.edit.title}>{post.data.title}</span>
+                      </a>
+                    </h3>
+
+                    <!-- Excerpt -->
+                    {post.data.excerpt && (
+                      <p
+                        {...post.edit.excerpt}
+                        class="text-sm text-neutral-600 dark:text-neutral-400 line-clamp-2 mb-3"
+                      >
+                        {post.data.excerpt}
+                      </p>
+                    )}
+
+                    <!-- Tags -->
+                    {tags.length > 0 && (
+                      <div class="mt-auto pt-2 flex flex-wrap gap-1.5">
+                        {tags.map((tag) => (
+                          <a
+                            href={`/tag/${tag.slug}`}
+                            class="text-xs px-2 py-0.5 rounded bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400"
+                          >
+                            {tag.label}
+                          </a>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </article>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+    </section>
+  </div>
+
+  <!-- Carousel script với nút điều hướng mũi tên -->
+  <script>
+    const carousel = document.getElementById("project-carousel")
+    const prevBtn = document.getElementById("carousel-prev")
+    const nextBtn = document.getElementById("carousel-next")
+
+    if (carousel && prevBtn && nextBtn) {
+      function getScrollStep() {
+        return carousel?.clientWidth ?? 320
+      }
+
+      prevBtn.addEventListener("click", () => {
+        carousel.scrollBy({ left: -getScrollStep(), behavior: "smooth" })
+      })
+
+      nextBtn.addEventListener("click", () => {
+        carousel.scrollBy({ left: getScrollStep(), behavior: "smooth" })
+      })
+    }
+  </script>
 </Base>
