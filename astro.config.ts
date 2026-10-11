@@ -1,4 +1,5 @@
 import cloudflare from "@astrojs/cloudflare"
+import { cacheCloudflare } from "@astrojs/cloudflare/cache"
 import react from "@astrojs/react"
 import { d1, kvCache, r2 } from "@emdash-cms/cloudflare"
 import tailwindcss from "@tailwindcss/vite"
@@ -9,6 +10,9 @@ import { github } from "emdash/auth/providers/github"
 export default defineConfig({
   output: "server",
   adapter: cloudflare(),
+  cache: {
+    provider: cacheCloudflare(),
+  },
   fonts: [
     {
       name: "Be Vietnam Pro",
@@ -52,5 +56,8 @@ export default defineConfig({
   devToolbar: { enabled: false },
   vite: {
     plugins: [tailwindcss()],
+  },
+  routeRules: {
+    "/": { maxAge: 300, swr: 86400 },
   },
 })

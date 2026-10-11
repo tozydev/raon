@@ -9,8 +9,22 @@
       "pattern": "tozydev.id.vn",
     },
   ],
-  "vars": {
-    "BUN_VERSION": "1.4.3",
+  "cache": {
+    "enabled": true,
+  },
+  "observability": {
+    "logs": {
+      "enabled": true,
+      "head_sampling_rate": 0.6,
+      "invocation_logs": false,
+    },
+    "traces": {
+      "enabled": true,
+      "head_sampling_rate": 0.05,
+    },
+    "issues": {
+      "enabled": true,
+    },
   },
   "d1_databases": [
     {
@@ -31,6 +45,6 @@
     },
   ],
   "triggers": {
-    "crons": ["* * * * *"],
+    "crons": ["0 * * * *"],
   },
 }
