@@ -9,7 +9,9 @@ import { github } from "emdash/auth/providers/github"
 
 export default defineConfig({
   output: "server",
-  adapter: cloudflare(),
+  adapter: cloudflare({
+    sessionKVBindingName: "CACHE",
+  }),
   cache: {
     provider: cacheCloudflare(),
   },
