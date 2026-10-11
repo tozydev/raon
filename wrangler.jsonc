@@ -9,6 +9,9 @@
       "pattern": "tozydev.id.vn",
     },
   ],
+  "vars": {
+    "BUN_VERSION": "1.4.3",
+  },
   "d1_databases": [
     {
       "binding": "DB",
