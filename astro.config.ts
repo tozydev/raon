@@ -1,76 +1,65 @@
-import { unified } from "@astrojs/markdown-remark"
-import mdx from "@astrojs/mdx"
-import sitemap from "@astrojs/sitemap"
+import cloudflare from "@astrojs/cloudflare"
+import { cacheCloudflare } from "@astrojs/cloudflare/cache"
+import react from "@astrojs/react"
+import { d1, kvCache, r2 } from "@emdash-cms/cloudflare"
 import tailwindcss from "@tailwindcss/vite"
 import { defineConfig, fontProviders } from "astro/config"
-import { rehypeExternalLinks, remarkReadingTime } from "./plugins"
+import emdash from "emdash/astro"
+import { github } from "emdash/auth/providers/github"
 
-// https://astro.build/config
 export default defineConfig({
-  site: process.env.SITE_URL || "https://tozydev.id.vn",
-  integrations: [mdx(), sitemap()],
-  vite: {
-    plugins: [tailwindcss()],
-    build: {
-      rolldownOptions: {
-        output: {
-          assetFileNames: ({ names }) => {
-            // Main CSS
-            if (names.includes("Base.css")) {
-              return "_raon/css/raon.[hash][extname]"
-            }
-            // Images
-            if (names.find((name) => /\.(png|jpe?g|gif|svg|webp|avif)$/.test(name))) {
-              return "_raon/images/[name].[hash][extname]"
-            }
-            return "_raon/[name].[hash][extname]"
-          },
-        },
-      },
-    },
-  },
-  build: {
-    assets: "_raon",
-  },
-  i18n: {
-    locales: ["vi", "en"],
-    defaultLocale: "vi",
-    routing: {
-      prefixDefaultLocale: false,
-    },
+  output: "server",
+  adapter: cloudflare({
+    sessionKVBindingName: "CACHE",
+  }),
+  cache: {
+    provider: cacheCloudflare(),
   },
   fonts: [
     {
-      provider: fontProviders.fontsource(),
-      name: "Quicksand",
-      cssVariable: "--font-quicksand",
-      fallbacks: ["sans-serif"],
-      weights: [700],
-      styles: ["normal"],
-      subsets: ["latin", "latin-ext", "vietnamese"],
-    },
-    {
-      provider: fontProviders.fontsource(),
       name: "Be Vietnam Pro",
-      cssVariable: "--font-be-vietnam-pro",
+      cssVariable: "--font-sans",
+      provider: fontProviders.google(),
+      subsets: ["latin", "vietnamese"],
       fallbacks: ["sans-serif"],
-      weights: [400, 600, 700],
-      subsets: ["latin", "latin-ext", "vietnamese"],
     },
     {
-      provider: fontProviders.fontsource(),
+      name: "Noto Sans",
+      cssVariable: "--font-heading",
+      provider: fontProviders.google(),
+      subsets: ["latin", "vietnamese"],
+      fallbacks: ["sans-serif"],
+    },
+    {
       name: "JetBrains Mono",
-      cssVariable: "--font-jetbrains-mono",
+      cssVariable: "--font-mono",
+      provider: fontProviders.google(),
+      subsets: ["latin", "vietnamese"],
       fallbacks: ["monospace"],
-      weights: [400],
-      styles: ["normal"],
-      subsets: ["latin", "latin-ext", "vietnamese"],
     },
   ],
-  markdown: {
-    processor: unified({
-      remarkPlugins: [remarkReadingTime],
-      rehypePlugins: [rehypeExternalLinks],
+  i18n: {
+    defaultLocale: "vi",
+    locales: ["vi"],
+  },
+  image: {
+    layout: "constrained",
+    responsiveStyles: true,
+  },
+  integrations: [
+    react(),
+    emdash({
+      authProviders: [github()],
+      database: d1({ binding: "DB", session: "auto" }),
+      storage: r2({ binding: "STORAGE" }),
+      objectCache: kvCache({ binding: "CACHE" }),
     }),
+  ],
+  devToolbar: { enabled: false },
+  vite: {
+    plugins: [tailwindcss()],
+  },
+  routeRules: {
+    "/": { maxAge: 300, swr: 86400 },
   },
 })
